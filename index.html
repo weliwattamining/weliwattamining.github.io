@@ -8,7 +8,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
-<script src="image-slot.js"></script>
+<script src="image-slot.js" defer></script>
 <style>
   :root {
     --sapphire: #071A2D;
@@ -1808,31 +1808,31 @@
       <!-- Chapter strip — click to switch. Each chapter can carry its own video src; missing srcs fall back to a still preview. -->
       <div class="mine-chapters" id="mineChapters">
         <div class="chap active" data-src="assets/mines_drone_flyover.mp4" data-poster="assets/photo-mine-1.jpg" data-caption="Inside the gem pits of Pathakada." data-label="Chapter 01 · Pelmadulla" data-dur="02:14">
-          <image-slot id="chap-1" shape="rect" src="assets/photo-mine-1.jpg" placeholder=""></image-slot>
+          <image-slot id="chap-1" shape="rect" src="assets/photo-mine-1.jpg" loading="lazy" placeholder=""></image-slot>
           <span class="chap-play" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M5 3 L21 12 L5 21 Z"/></svg></span>
           <span class="dur">02:14</span>
           <span class="meta">01 · The Pit</span>
         </div>
         <div class="chap" data-src="" data-poster="assets/photo-mine-2.jpg" data-caption="Sapphire-bearing gravel, read by hand." data-label="Chapter 02 · Recovery" data-dur="01:48">
-          <image-slot id="chap-2" shape="rect" src="assets/photo-mine-2.jpg" placeholder=""></image-slot>
+          <image-slot id="chap-2" loading="lazy"" shape="rect" src="assets/photo-mine-2.jpg" placeholder=""></image-slot>
           <span class="chap-play" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M5 3 L21 12 L5 21 Z"/></svg></span>
           <span class="dur">01:48</span>
           <span class="meta">02 · Gravel Wash</span>
         </div>
         <div class="chap" data-src="" data-poster="assets/photo-mine-3.jpg" data-caption="First sort, where intuition meets the stone." data-label="Chapter 03 · Sorting" data-dur="02:32">
-          <image-slot id="chap-3" shape="rect" src="assets/photo-mine-3.jpg" placeholder=""></image-slot>
+          <image-slot id="chap-3" loading="lazy"" shape="rect" src="assets/photo-mine-3.jpg" placeholder=""></image-slot>
           <span class="chap-play" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M5 3 L21 12 L5 21 Z"/></svg></span>
           <span class="dur">02:32</span>
           <span class="meta">03 · Sorting</span>
         </div>
         <div class="chap" data-src="" data-poster="assets/mine-4.jpg" data-caption="A rough sapphire, still wearing the earth." data-label="Chapter 04 · The Stone" data-dur="01:22">
-          <image-slot id="chap-4" shape="rect" src="assets/mine-4.jpg" placeholder=""></image-slot>
+          <image-slot id="chap-4" loading="lazy"" shape="rect" src="assets/mine-4.jpg" placeholder=""></image-slot>
           <span class="chap-play" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M5 3 L21 12 L5 21 Z"/></svg></span>
           <span class="dur">01:22</span>
           <span class="meta">04 · Rough</span>
         </div>
         <div class="chap" data-src="" data-poster="assets/mine-5.jpg" data-caption="The miners who taught us the gravels." data-label="Chapter 05 · The People" data-dur="03:06">
-          <image-slot id="chap-5" shape="rect" src="assets/mine-5.jpg" placeholder=""></image-slot>
+          <image-slot id="chap-5" loading="lazy"" shape="rect" src="assets/mine-5.jpg" placeholder=""></image-slot>
           <span class="chap-play" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M5 3 L21 12 L5 21 Z"/></svg></span>
           <span class="dur">03:06</span>
           <span class="meta">05 · The People</span>
@@ -1856,7 +1856,7 @@
     <!-- Featured stone -->
     <div class="feature-find">
       <div class="ff-image">
-        <image-slot id="ff-1" shape="rect" src="assets/photo-feature.jpg" placeholder="The 1256 ct royal blue sapphire — rough and/or polished"></image-slot>
+        <image-slot id="ff-1" loading="lazy" shape="rect" src="assets/photo-feature.jpg" placeholder="The 1256 ct royal blue sapphire — rough and/or polished"></image-slot>
       </div>
       <div>
         <div class="eyebrow" style="margin-bottom: 18px;">Featured · 1994 · Pelmadulla</div>
@@ -1875,7 +1875,7 @@
     <div class="finds-grid">
       <article class="stone-card">
         <div class="pic">
-          <image-slot id="stone-1" shape="rect" src="assets/stone-1.jpg" placeholder="Color-change alexandrite · cut"></image-slot>
+          <image-slot id="stone-1" loading="lazy" shape="rect" src="assets/stone-1.jpg" placeholder="Color-change alexandrite · cut"></image-slot>
         </div>
         <div class="info">
           <div class="cat"><span>Chrysoberyl</span><span class="status">Archive · 2018</span></div>
@@ -1885,7 +1885,7 @@
       </article>
       <article class="stone-card">
         <div class="pic">
-          <image-slot id="stone-2" shape="rect" src="assets/stone-2.jpg" placeholder="Pink sapphire macro"></image-slot>
+          <image-slot id="stone-2" loading="lazy" shape="rect" src="assets/stone-2.jpg" placeholder="Pink sapphire macro"></image-slot>
         </div>
         <div class="info">
           <div class="cat"><span>Fancy Sapphire</span><span class="status">Archive · 2021</span></div>
@@ -1895,7 +1895,7 @@
       </article>
       <article class="stone-card">
         <div class="pic">
-          <image-slot id="stone-3" shape="rect" src="assets/stone-3.jpg" placeholder="Alexandrite rough — color-change"></image-slot>
+          <image-slot id="stone-3" loading="lazy" shape="rect" src="assets/stone-3.jpg" placeholder="Alexandrite rough — color-change"></image-slot>
         </div>
         <div class="info">
           <div class="cat"><span>Blue Sapphire</span><span class="status">Archive · 2006</span></div>
@@ -1905,7 +1905,7 @@
       </article>
       <article class="stone-card">
         <div class="pic">
-          <image-slot id="stone-4" shape="rect" src="assets/stone-4.jpg" placeholder="Yellow sapphire cushion cut"></image-slot>
+          <image-slot id="stone-4" loading="lazy" shape="rect" src="assets/stone-4.jpg" placeholder="Yellow sapphire cushion cut"></image-slot>
         </div>
         <div class="info">
           <div class="cat"><span>Blue Sapphire</span><span class="status">Archive · 2024</span></div>
@@ -1915,7 +1915,7 @@
       </article>
       <article class="stone-card">
         <div class="pic">
-          <image-slot id="stone-5" shape="rect" src="assets/stone-5.jpg" placeholder="Spinel — violet-grey"></image-slot>
+          <image-slot id="stone-5" loading="lazy" shape="rect" src="assets/stone-5.jpg" placeholder="Spinel — violet-grey"></image-slot>
         </div>
         <div class="info">
           <div class="cat"><span>Chrysoberyl</span><span class="status">Archive · 2022</span></div>
@@ -1925,7 +1925,7 @@
       </article>
       <article class="stone-card">
         <div class="pic">
-          <image-slot id="stone-6" shape="rect" src="assets/stone-6.jpg" placeholder="Cornflower blue sapphire — cushion"></image-slot>
+          <image-slot id="stone-6" loading="lazy" shape="rect" src="assets/stone-6.jpg" placeholder="Cornflower blue sapphire — cushion"></image-slot>
         </div>
         <div class="info">
           <div class="cat"><span>Blue Sapphire</span><span class="status">Archive · 2017</span></div>
@@ -2002,7 +2002,7 @@
       </div>
       <!-- Single film replaces the four-card grid. Drop a real .mp4/.webm into ethical-vid src, or drag-drop onto the player. -->
       <div class="ethical-video" id="ethicalVid">
-        <image-slot id="ethical-poster" class="poster" shape="rect" src="assets/photo-ethical.jpg" placeholder="Closed-loop wash plant — silt settling ponds, clear water returning to the pit"></image-slot>
+        <image-slot id="ethical-poster" loading="lazy" class="poster" shape="rect" src="assets/photo-ethical.jpg" placeholder="Closed-loop wash plant — silt settling ponds, clear water returning to the pit"></image-slot>
         <video id="ethicalVidEl" preload="metadata" playsinline muted loop poster="assets/photo-ethical.jpg"></video>
         <div class="veil" aria-hidden="true" style="height: 550px"></div>
         <button class="play-btn" id="ethicalPlayBtn" aria-label="Play sourcing film">
@@ -2021,7 +2021,7 @@
 <section class="final" id="contact">
   <div class="final-bg"></div>
   <div class="final-img">
-    <image-slot id="final-image" shape="rect" src="assets/final.jpg" placeholder="Atmospheric close — single sapphire on dark velvet, or hand at the mine at dusk"></image-slot>
+    <image-slot id="final-image" loading="lazy" shape="rect" src="assets/final.jpg" placeholder="Atmospheric close — single sapphire on dark velvet, or hand at the mine at dusk"></image-slot>
   </div>
   <div class="final-veil"></div>
   <div class="final-inner container">
@@ -2133,11 +2133,25 @@
   }/*EDITMODE-END*/;
 </script>
 
-<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
-<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
-<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
-<script type="text/babel" src="tweaks-panel.jsx"></script>
-<script type="text/babel" src="tweaks-app.jsx"></script>
+<script>
+  // Only load the tweaks panel on localhost (dev only — skip on live site)
+  if (location.hostname === 'localhost' || location.hostname === '127.0.0.1') {
+    const scripts = [
+      'https://unpkg.com/react@18.3.1/umd/react.production.min.js',
+      'https://unpkg.com/react-dom@18.3.1/umd/react-dom.production.min.js',
+      'https://unpkg.com/@babel/standalone@7.29.0/babel.min.js'
+    ];
+    scripts.forEach(src => {
+      const s = document.createElement('script'); s.src = src; document.head.appendChild(s);
+    });
+    // Load tweaks after Babel is ready
+    window.addEventListener('load', () => {
+      ['tweaks-panel.jsx','tweaks-app.jsx'].forEach(src => {
+        const s = document.createElement('script'); s.type = 'text/babel'; s.src = src; document.body.appendChild(s);
+      });
+    });
+  }
+</script>
 
 <script>
   // ───── Mobile nav drawer ─────
