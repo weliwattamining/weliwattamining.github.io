@@ -616,12 +616,23 @@
     background: var(--midnight);
     border: 1px solid var(--line);
     overflow: hidden;
+    transition: aspect-ratio 0.4s ease;
+  }
+  .mine-video.vertical {
+    aspect-ratio: 9 / 16;
+    max-width: 420px;
+    margin-left: auto;
+    margin-right: auto;
   }
   .mine-video video,
   .mine-video .poster {
     position: absolute; inset: 0;
     width: 100%; height: 100%;
     object-fit: cover;
+  }
+  .mine-video.vertical video,
+  .mine-video.vertical .poster {
+    object-fit: contain;
   }
   .mine-video .poster {
     transition: opacity 0.6s ease;
@@ -2236,9 +2247,18 @@
       if (src) {
         video.src = src;
         video.load();
+        video.addEventListener('loadedmetadata', function onMeta() {
+          video.removeEventListener('loadedmetadata', onMeta);
+          if (video.videoHeight > video.videoWidth) {
+            player.classList.add('vertical');
+          } else {
+            player.classList.remove('vertical');
+          }
+        });
       } else {
         video.removeAttribute('src');
         video.load();
+        player.classList.remove('vertical');
       }
       player.classList.remove('playing');
       video.pause();
