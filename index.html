@@ -1786,8 +1786,8 @@
     <div class="mine-gallery">
       <!-- Large cinematic player. Drop a video URL via Tweaks, or replace `data-src` with a real .mp4/.webm. The poster shows until playback starts. -->
       <div class="mine-video" id="mineVideo">
-        <image-slot id="mine-poster" class="poster" shape="rect" src="assets/photo-mine-1.jpg" placeholder="Mine documentary still"></image-slot>
-        <video id="mineVideoEl" preload="metadata" playsinline muted loop poster="assets/photo-mine-1.jpg"></video>
+        <image-slot id="mine-poster" class="poster" shape="rect" src="assets/thumb-uradeniya.jpg" placeholder="Mine documentary still"></image-slot>
+        <video id="mineVideoEl" preload="metadata" playsinline muted loop poster="assets/thumb-uradeniya.jpg"></video>
         <div class="veil" aria-hidden="true"></div>
 
         <button class="play-btn" id="minePlayBtn" aria-label="Play mine documentary">
@@ -1807,16 +1807,16 @@
 
       <!-- Chapter strip — click to switch. Each chapter can carry its own video src; missing srcs fall back to a still preview. -->
       <div class="mine-chapters" id="mineChapters">
-        <div class="chap active" data-src="assets/mines_drone_flyover.mp4" data-poster="assets/photo-mine-1.jpg" data-caption="Inside the gem pits of Pathakada." data-label="Chapter 01 · Pelmadulla" data-dur="02:14">
-          <image-slot id="chap-1" shape="rect" src="assets/photo-mine-1.jpg" loading="lazy" placeholder=""></image-slot>
+        <div class="chap active" data-src="assets/uradeniya_water_circulation.mp4" data-poster="assets/thumb-uradeniya.jpg" data-caption="Inside the gem pits of Pathakada." data-label="Chapter 01 · Pelmadulla" data-dur="00:55">
+          <image-slot id="chap-1" shape="rect" src="assets/thumb-uradeniya.jpg" loading="lazy" placeholder=""></image-slot>
           <span class="chap-play" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M5 3 L21 12 L5 21 Z"/></svg></span>
-          <span class="dur">02:14</span>
+          <span class="dur">00:55</span>
           <span class="meta">01 · The Pit</span>
         </div>
-        <div class="chap" data-src="" data-poster="assets/photo-mine-2.jpg" data-caption="Sapphire-bearing gravel, read by hand." data-label="Chapter 02 · Recovery" data-dur="01:48">
-          <image-slot id="chap-2" loading="lazy"" shape="rect" src="assets/photo-mine-2.jpg" placeholder=""></image-slot>
+        <div class="chap" data-src="assets/mines_drone_flyover.mp4" data-poster="assets/thumb-mines-drone.jpg" data-caption="Sapphire-bearing gravel, read by hand." data-label="Chapter 02 · Recovery" data-dur="00:14">
+          <image-slot id="chap-2" loading="lazy" shape="rect" src="assets/thumb-mines-drone.jpg" placeholder=""></image-slot>
           <span class="chap-play" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M5 3 L21 12 L5 21 Z"/></svg></span>
-          <span class="dur">01:48</span>
+          <span class="dur">00:14</span>
           <span class="meta">02 · Gravel Wash</span>
         </div>
         <div class="chap" data-src="" data-poster="assets/photo-mine-3.jpg" data-caption="First sort, where intuition meets the stone." data-label="Chapter 03 · Sorting" data-dur="02:32">
