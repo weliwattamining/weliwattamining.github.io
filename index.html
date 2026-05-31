@@ -1105,6 +1105,111 @@
     .ethical-video { aspect-ratio: 3 / 4; height: auto; width: 100%; max-width: 420px; justify-self: center; }
   }
 
+  /* ─────────── Field Dispatch · Instagram ─────────── */
+  .field {
+    background: var(--midnight);
+    color: var(--ivory);
+    border-top: 1px solid var(--line);
+  }
+  .field-head {
+    margin-bottom: 44px;
+  }
+  .field-head .ig-handle { margin-top: 16px; }
+  .ig-handle {
+    display: inline-flex; align-items: center; gap: 11px;
+    font-family: var(--mono);
+    font-size: 12px; letter-spacing: 0.14em;
+    color: var(--muted-ivory);
+  }
+  .ig-handle .live {
+    width: 6px; height: 6px; border-radius: 50%;
+    background: var(--gold);
+    box-shadow: 0 0 0 4px rgba(191, 164, 111, 0.16);
+    animation: rec-pulse 2s ease-in-out infinite;
+  }
+  .ig-handle a { color: var(--gold-soft); transition: color 0.25s ease; }
+  .ig-handle a:hover { color: var(--gold); }
+
+  .ig-grid {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 14px;
+  }
+  .ig-tile {
+    position: relative;
+    aspect-ratio: 1 / 1;
+    overflow: hidden;
+    border: 1px solid var(--line);
+    transition: border-color 0.35s ease;
+  }
+  .ig-tile:hover { border-color: rgba(191, 164, 111, 0.6); }
+  .ig-tile image-slot, .ig-tile img {
+    position: absolute; inset: 0;
+    width: 100%; height: 100%;
+    object-fit: cover; display: block;
+    transition: transform 1.2s cubic-bezier(.2,.7,.2,1);
+  }
+  .ig-tile:hover image-slot, .ig-tile:hover img { transform: scale(1.05); }
+  .ig-tile::before {
+    content: ""; position: absolute; inset: 0; z-index: 1;
+    background: linear-gradient(to top, rgba(2, 7, 13, 0.86) 0%, rgba(2, 7, 13, 0.0) 56%);
+    opacity: 0; transition: opacity 0.35s ease; pointer-events: none;
+  }
+  .ig-tile:hover::before { opacity: 1; }
+  .ig-date {
+    position: absolute; top: 11px; left: 11px; z-index: 2;
+    font-family: var(--mono);
+    font-size: 9.5px; letter-spacing: 0.18em; text-transform: uppercase;
+    color: var(--ivory); opacity: 0.88;
+    display: inline-flex; align-items: center; gap: 7px;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.6);
+  }
+  .ig-date .pip { width: 4px; height: 4px; border-radius: 50%; background: var(--gold); }
+  .ig-glyph {
+    position: absolute; top: 9px; right: 9px; z-index: 2;
+    width: 17px; height: 17px; color: var(--ivory);
+    opacity: 0; transition: opacity 0.35s ease;
+    filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.5));
+  }
+  .ig-tile:hover .ig-glyph { opacity: 0.92; }
+  .ig-cap {
+    position: absolute; left: 13px; right: 13px; bottom: 12px; z-index: 2;
+    font-family: var(--sans);
+    font-size: 12.5px; font-weight: 300; line-height: 1.42;
+    color: var(--ivory); text-wrap: pretty;
+    opacity: 0; transform: translateY(7px);
+    transition: opacity 0.4s ease, transform 0.4s ease;
+  }
+  .ig-tile:hover .ig-cap { opacity: 1; transform: none; }
+  .field-foot {
+    display: flex; justify-content: center;
+    margin-top: 44px;
+  }
+  @media (max-width: 980px) {
+    .ig-grid { grid-template-columns: repeat(3, 1fr); }
+  }
+  @media (max-width: 640px) {
+    .ig-grid {
+      display: flex;
+      grid-template-columns: none;
+      overflow-x: auto;
+      scroll-snap-type: x mandatory;
+      -webkit-overflow-scrolling: touch;
+      scrollbar-width: none;
+      gap: 12px;
+      margin-left: -22px; margin-right: -22px;
+      padding: 0 22px 4px;
+    }
+    .ig-grid::-webkit-scrollbar { display: none; }
+    .ig-tile {
+      flex: 0 0 62%;
+      max-width: 250px;
+      scroll-snap-align: start;
+    }
+    .ig-tile::before { opacity: 0.55; }
+    .ig-cap { opacity: 1; transform: none; }
+  }
+
   /* ─────────── For Buyers ─────────── */
   .buyers {
     background: var(--ivory);
@@ -1731,6 +1836,7 @@
       <a href="#mine">The Mines</a>
       <a href="#finds">Stones</a>
       <a href="#m2m">Mine to Market</a>
+      <a href="#field">The Field</a>
     </nav>
     <!-- Mobile hamburger — toggles .nav-drawer; only visible below 980px -->
     <button class="nav-burger" id="navBurger" aria-label="Open menu" aria-expanded="false" aria-controls="navDrawer">
@@ -1745,6 +1851,7 @@
       <a href="#mine">The Mines</a>
       <a href="#finds">Stones</a>
       <a href="#m2m">Mine to Market</a>
+      <a href="#field">The Field</a>
       <a href="#contact" data-open-inquiry class="drawer-cta">Contact Us</a>
     </nav>
     <div class="drawer-foot">
@@ -2093,6 +2200,60 @@
   </div>
 </section>
 
+<!-- ─────────── FIELD DISPATCH · INSTAGRAM ─────────── -->
+<section class="field pad-y" id="field">
+  <div class="container">
+    <div class="field-head reveal">
+      <div class="lead-col">
+        <div class="eyebrow">From the Field · Instagram</div>
+        <div class="ig-handle">
+          <span class="live" aria-hidden="true"></span>
+          Latest from
+          <a href="https://instagram.com/weliwattamining" target="_blank" rel="noopener">@weliwattamining</a>
+        </div>
+      </div>
+    </div>
+
+    <!-- Curated contact sheet — drop your latest posts into each tile. -->
+    <div class="ig-grid reveal">
+      <a class="ig-tile" href="https://instagram.com/weliwattamining" target="_blank" rel="noopener" aria-label="Open Instagram post">
+        <image-slot id="ig-1" loading="lazy" shape="rect" placeholder="Latest post — rough sapphire fresh from the gravel, in hand"></image-slot>
+        <span class="ig-date"><span class="pip"></span>2d</span>
+        <svg class="ig-glyph" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1" fill="currentColor" stroke="none"/></svg>
+        <span class="ig-cap">First wash of the morning — a cornflower rough comes up clean.</span>
+      </a>
+      <a class="ig-tile" href="https://instagram.com/weliwattamining" target="_blank" rel="noopener" aria-label="Open Instagram post">
+        <image-slot id="ig-2" loading="lazy" shape="rect" placeholder="Miners at the pit — working the gem-bearing gravel"></image-slot>
+        <span class="ig-date"><span class="pip"></span>5d</span>
+        <svg class="ig-glyph" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1" fill="currentColor" stroke="none"/></svg>
+        <span class="ig-cap">Down in the Pelmadulla pit with the crew that knows this ground.</span>
+      </a>
+      <a class="ig-tile" href="https://instagram.com/weliwattamining" target="_blank" rel="noopener" aria-label="Open Instagram post">
+        <image-slot id="ig-3" loading="lazy" shape="rect" placeholder="Sorting tray — rough stones laid out for first-pass evaluation"></image-slot>
+        <span class="ig-date"><span class="pip"></span>1w</span>
+        <svg class="ig-glyph" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1" fill="currentColor" stroke="none"/></svg>
+        <span class="ig-cap">Sorting the week's recovery — color, crystal, and what's worth planning.</span>
+      </a>
+      <a class="ig-tile" href="https://instagram.com/weliwattamining" target="_blank" rel="noopener" aria-label="Open Instagram post">
+        <image-slot id="ig-4" loading="lazy" shape="rect" placeholder="Wash plant — settling ponds, water running clear back to the pit"></image-slot>
+        <span class="ig-date"><span class="pip"></span>2w</span>
+        <svg class="ig-glyph" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1" fill="currentColor" stroke="none"/></svg>
+        <span class="ig-cap">The wash loop, doing its quiet work — clear water back to the river.</span>
+      </a>
+      <a class="ig-tile" href="https://instagram.com/weliwattamining" target="_blank" rel="noopener" aria-label="Open Instagram post">
+        <image-slot id="ig-5" loading="lazy" shape="rect" placeholder="A finished stone — polished sapphire held to the light"></image-slot>
+        <span class="ig-date"><span class="pip"></span>3w</span>
+        <svg class="ig-glyph" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1" fill="currentColor" stroke="none"/></svg>
+        <span class="ig-cap">From this ground to this colour. Months of work in one stone.</span>
+      </a>
+    </div>
+
+    <div class="field-foot reveal">
+      <a class="btn ghost" href="https://instagram.com/weliwattamining" target="_blank" rel="noopener">Follow @weliwattamining <span class="arrow"></span></a>
+    </div>
+  </div>
+</section>
+
 <!-- ─────────── FINAL CTA ─────────── -->
 <section class="final" id="contact">
   <div class="final-bg"></div>
@@ -2158,6 +2319,7 @@
           <li><a href="#contact" data-open-inquiry>Visit the Mine</a></li>
           <li><a href="#contact" data-open-inquiry>Private Sourcing</a></li>
           <li><a href="#mine">At the Source</a></li>
+          <li><a href="#field">Latest from the Field</a></li>
           <li><a href="#finds">Archive of Finds</a></li>
           <li><a href="#ethical">Responsible Mining</a></li>
           <li><a href="#contact">Contact</a></li>
