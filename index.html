@@ -2436,7 +2436,7 @@
       const proj = (cx * ux + cy * uy - minP) / span;
       // small organic jitter on the delay so the wave isn't perfectly straight
       const jitter = (rnd() - 0.5) * 0.08;
-      const delay = -(rnd() * DUR); // random offset so facets don't all flash in unison
+      const delay = -((proj + jitter) * DUR);
       const base = bases[Math.floor(rnd() * bases.length)];
       const mid  = mids[Math.floor(rnd() * mids.length)];
       const peak = peaks[Math.floor(rnd() * peaks.length)];
