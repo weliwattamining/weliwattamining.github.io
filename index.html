@@ -301,7 +301,7 @@
   .hero-facets {
     position: absolute;
     inset: 0;
-    z-index: 1;
+    z-index: 55; /* above fixed nav (z-index:50) so nav backdrop-filter doesn't blur/clip the sweep */
     pointer-events: none;
     overflow: hidden;
     opacity: 0.96;
@@ -2454,7 +2454,11 @@
 
   buildHeroFacets();
   let __facetTimer;
+  let __facetLastW = window.innerWidth;
   window.addEventListener('resize', () => {
+    const w = window.innerWidth;
+    if (w === __facetLastW) return; // height-only change (mobile address bar) — skip rebuild
+    __facetLastW = w;
     clearTimeout(__facetTimer);
     __facetTimer = setTimeout(buildHeroFacets, 250);
   });
