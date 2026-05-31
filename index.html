@@ -995,6 +995,7 @@
     .timeline { grid-template-columns: 1fr 1fr; }
     .timeline .step { padding: 36px 20px 36px; border-bottom: 1px solid rgba(7, 26, 45, 0.1); }
     .timeline .step:nth-child(even) { border-right: 0; }
+    .timeline .step::before { display: none; }
   }
   @media (max-width: 600px) {
     .timeline { grid-template-columns: 1fr; }
@@ -1391,16 +1392,59 @@
     .mine-head { grid-template-columns: 1fr; gap: 24px; }
     .mine-head .lede { max-width: 64ch; }
 
-    /* Credibility strip → 2×2 */
-    .trust-inner { grid-template-columns: 1fr 1fr; }
+    /* Credibility strip → horizontal swipe carousel */
+    .trust-inner {
+      display: flex;
+      grid-template-columns: none;
+      gap: 0;
+      border-top: 0; border-bottom: 0;
+      overflow-x: auto;
+      scroll-snap-type: x mandatory;
+      -webkit-overflow-scrolling: touch;
+      scrollbar-width: none;
+      margin-left: -44px; margin-right: -44px;
+      padding: 0 44px;
+    }
+    .trust-inner::-webkit-scrollbar { display: none; }
+    .trust-cell {
+      flex: 0 0 52%;
+      max-width: 340px;
+      scroll-snap-align: start;
+      border-right: 1px solid var(--line-dark);
+      border-top: 1px solid var(--line-dark);
+      border-bottom: 1px solid var(--line-dark);
+    }
+    .trust-cell:first-child { border-left: 1px solid var(--line-dark); }
+    .trust-cell:nth-child(2) { border-right: 1px solid var(--line-dark); }
 
     /* Archive grid → 2-up (cleaner than cramped 3 / lonely 1) */
     .finds-grid { grid-template-columns: 1fr 1fr; }
 
-    /* Mine-to-market → 2-up (with row dividers + hide mid dots) */
-    .timeline { grid-template-columns: 1fr 1fr; }
-    .timeline .step { padding: 36px 20px; border-bottom: 1px solid rgba(7, 26, 45, 0.1); }
-    .timeline .step:nth-child(even) { border-right: 0; }
+    /* Mine-to-market → horizontal swipe carousel at tablet */
+    .timeline {
+      display: flex;
+      grid-template-columns: none;
+      gap: 14px;
+      overflow-x: auto;
+      scroll-snap-type: x mandatory;
+      -webkit-overflow-scrolling: touch;
+      scrollbar-width: none;
+      border-top: 0;
+      margin-left: -44px; margin-right: -44px;
+      padding: 4px 44px 4px;
+    }
+    .timeline::before { display: none; }
+    .timeline::-webkit-scrollbar { display: none; }
+    .timeline .step {
+      flex: 0 0 42%;
+      max-width: 300px;
+      scroll-snap-align: start;
+      padding: 28px 24px 30px;
+      border: 1px solid rgba(7, 26, 45, 0.12);
+      border-top: 3px solid var(--gold);
+      border-bottom: 1px solid rgba(7, 26, 45, 0.12);
+      border-right: 1px solid rgba(7, 26, 45, 0.12);
+    }
     .timeline .step::before { display: none; }
 
     /* Chapter strip → 3-up so thumbnails stay legible */
@@ -1443,9 +1487,31 @@
     .archive-note + div .btn,
     #finds .btn { width: 100%; justify-content: center; min-height: 52px; }
 
-    /* Credibility cards → single column, restrained number size */
-    .trust-inner { grid-template-columns: 1fr; }
-    .trust-cell { padding: 28px 22px; }
+    /* Credibility cards → horizontal swipe carousel */
+    .trust-inner {
+      display: flex;
+      grid-template-columns: none;
+      gap: 0;
+      border-top: 0;
+      border-bottom: 0;
+      overflow-x: auto;
+      scroll-snap-type: x mandatory;
+      -webkit-overflow-scrolling: touch;
+      scrollbar-width: none;
+      margin-left: -22px; margin-right: -22px;
+      padding: 0 22px;
+    }
+    .trust-inner::-webkit-scrollbar { display: none; }
+    .trust-cell {
+      flex: 0 0 78%;
+      max-width: 300px;
+      scroll-snap-align: start;
+      padding: 32px 24px;
+      border-right: 1px solid var(--line-dark);
+      border-top: 1px solid var(--line-dark);
+      border-bottom: 1px solid var(--line-dark);
+    }
+    .trust-cell:first-child { border-left: 1px solid var(--line-dark); }
     .trust-cell .n { font-size: clamp(38px, 11vw, 46px) !important; line-height: 1.05; }
     .trust-cell p { font-size: 15px; }
 
