@@ -18,11 +18,36 @@
 <link rel="icon" type="image/png" href="assets/logo-mark-white.png" media="(prefers-color-scheme: dark)" />
 <link rel="icon" type="image/png" href="assets/logo-mark-dark.png" media="(prefers-color-scheme: light)" />
 <link rel="apple-touch-icon" href="assets/logo-mark-white.png" />
-<!-- Google tag (gtag.js) -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-GQNNQTHQGC"></script>
+<!-- Google Consent Mode v2 — must run before gtag/GTM -->
 <script>
   window.dataLayer = window.dataLayer || [];
   function gtag(){dataLayer.push(arguments);}
+
+  // Default: all denied until user chooses
+  gtag('consent', 'default', {
+    analytics_storage:    'denied',
+    ad_storage:           'denied',
+    ad_user_data:         'denied',
+    ad_personalization:   'denied',
+    wait_for_update:      500
+  });
+
+  // Restore previous choice immediately so returning visitors aren't re-asked
+  (function(){
+    var c = localStorage.getItem('ww_consent');
+    if (c === 'granted') {
+      gtag('consent', 'update', {
+        analytics_storage:  'granted',
+        ad_storage:         'denied',   // only analytics for now
+        ad_user_data:       'denied',
+        ad_personalization: 'denied'
+      });
+    }
+  })();
+</script>
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-GQNNQTHQGC"></script>
+<script>
   gtag('js', new Date());
   gtag('config', 'G-GQNNQTHQGC');
 </script>
@@ -360,6 +385,77 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
     .holding-meta { gap: 14px 20px; }
   }
   ::selection { background: var(--gold); color: var(--sapphire); }
+
+  /* ─────────── Cookie consent banner ─────────── */
+  #cookie-banner {
+    position: fixed;
+    bottom: 0; left: 0; right: 0;
+    z-index: 200;
+    background: rgba(7, 26, 45, 0.96);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border-top: 1px solid rgba(191, 164, 111, 0.25);
+    padding: 20px 32px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 24px;
+    flex-wrap: wrap;
+    transform: translateY(100%);
+    transition: transform 0.45s cubic-bezier(.2,.7,.2,1);
+  }
+  #cookie-banner.visible { transform: translateY(0); }
+  #cookie-banner p {
+    margin: 0;
+    font-size: 13px;
+    line-height: 1.55;
+    color: rgba(247, 242, 234, 0.72);
+    max-width: 64ch;
+  }
+  #cookie-banner p a {
+    color: var(--gold-soft);
+    border-bottom: 1px solid rgba(191, 164, 111, 0.35);
+    padding-bottom: 1px;
+    transition: color 0.2s, border-color 0.2s;
+  }
+  #cookie-banner p a:hover { color: var(--gold); border-color: var(--gold); }
+  .cookie-btns {
+    display: flex;
+    gap: 10px;
+    flex-shrink: 0;
+  }
+  .cookie-btns button {
+    font-family: var(--sans);
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    padding: 11px 20px;
+    border: 1px solid;
+    cursor: pointer;
+    transition: background 0.3s ease, color 0.3s ease;
+  }
+  .cookie-accept {
+    background: var(--gold);
+    color: var(--sapphire);
+    border-color: var(--gold);
+  }
+  .cookie-accept:hover { background: var(--gold-soft); border-color: var(--gold-soft); }
+  .cookie-decline {
+    background: transparent;
+    color: rgba(247, 242, 234, 0.6);
+    border-color: rgba(247, 242, 234, 0.22);
+  }
+  .cookie-decline:hover {
+    background: rgba(247, 242, 234, 0.06);
+    color: var(--ivory);
+    border-color: rgba(247, 242, 234, 0.4);
+  }
+  @media (max-width: 600px) {
+    #cookie-banner { padding: 18px 22px; flex-direction: column; align-items: flex-start; }
+    .cookie-btns { width: 100%; }
+    .cookie-btns button { flex: 1; }
+  }
 </style>
 </head>
 <body>
@@ -368,6 +464,15 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
 <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-KWHPWZ3S"
 height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 <!-- End Google Tag Manager (noscript) -->
+
+<!-- Cookie consent banner -->
+<div id="cookie-banner" role="dialog" aria-label="Cookie consent">
+  <p>We use analytics cookies to understand how visitors find us. No advertising or third-party tracking. <a href="https://policies.google.com/privacy" target="_blank" rel="noopener">Learn more</a></p>
+  <div class="cookie-btns">
+    <button class="cookie-decline" id="cookie-decline">Decline</button>
+    <button class="cookie-accept" id="cookie-accept">Accept</button>
+  </div>
+</div>
 
 <section class="hero" id="top">
   <div class="hero-bg" aria-hidden="true"></div>
@@ -514,6 +619,33 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
   });
 </script>
 
+<script>
+  // ───── Cookie consent banner ─────
+  (function () {
+    var banner  = document.getElementById('cookie-banner');
+    var accept  = document.getElementById('cookie-accept');
+    var decline = document.getElementById('cookie-decline');
+    if (!banner) return;
+
+    // Only show if no prior choice
+    if (!localStorage.getItem('ww_consent')) {
+      setTimeout(function () { banner.classList.add('visible'); }, 800);
+    }
+
+    function dismiss() { banner.classList.remove('visible'); }
+
+    accept.addEventListener('click', function () {
+      localStorage.setItem('ww_consent', 'granted');
+      gtag('consent', 'update', { analytics_storage: 'granted' });
+      dismiss();
+    });
+
+    decline.addEventListener('click', function () {
+      localStorage.setItem('ww_consent', 'denied');
+      dismiss();
+    });
+  })();
+</script>
 
 </body>
 </html>
