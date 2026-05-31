@@ -1,0 +1,111 @@
+name: Refresh Instagram Feed
+
+on:
+  schedule:
+    - cron: '0 */6 * * *'   # Every 6 hours
+  workflow_dispatch:          # Manual trigger from GitHub Actions tab
+
+permissions:
+  contents: write
+
+jobs:
+  refresh:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Fetch posts and download images
+        env:
+          INSTAGRAM_TOKEN: ${{ secrets.INSTAGRAM_TOKEN }}
+        run: |
+          mkdir -p assets/ig
+
+          # Fetch latest 5 posts (images only)
+          curl -sf "https://graph.instagram.com/me/media?fields=id,caption,media_type,media_url,permalink,timestamp&access_token=${INSTAGRAM_TOKEN}&limit=10" > /tmp/ig_raw.json || {
+            echo "API call failed — check INSTAGRAM_TOKEN secret"; exit 1
+          }
+
+          python3 << 'PYEOF'
+          import json, urllib.request, os
+          from datetime import datetime, timezone
+
+          with open('/tmp/ig_raw.json') as f:
+              data = json.load(f)
+
+          if 'error' in data:
+              print("API error:", data['error'].get('message',''))
+              raise SystemExit(1)
+
+          posts = []
+          idx = 1
+          for post in data.get('data', []):
+              if post.get('media_type') not in ('IMAGE', 'CAROUSEL_ALBUM'):
+                  continue
+              if idx > 5:
+                  break
+
+              media_url = post.get('media_url', '')
+              filename   = f"assets/ig/post-{idx}.jpg"
+
+              # Download image
+              try:
+                  urllib.request.urlretrieve(media_url, filename)
+              except Exception as e:
+                  print(f"Download failed for post {idx}: {e}")
+                  continue
+
+              # Human-readable age
+              ts = post.get('timestamp', '')
+              try:
+                  dt    = datetime.fromisoformat(ts.replace('Z', '+00:00'))
+                  delta = datetime.now(timezone.utc) - dt
+                  d     = delta.days
+                  age   = 'Today' if d == 0 else f'{d}d' if d < 7 else f'{d//7}w'
+              except Exception:
+                  age = ''
+
+              caption = (post.get('caption') or '').split('\n')[0][:120]
+
+              posts.append({
+                  'index':     idx,
+                  'image':     filename,
+                  'permalink': post.get('permalink', 'https://instagram.com/weliwattamining'),
+                  'caption':   caption,
+                  'age':       age,
+              })
+              idx += 1
+
+          out = {
+              'posts':   posts,
+              'updated': datetime.now(timezone.utc).isoformat(),
+          }
+          with open('assets/instagram-feed.json', 'w') as f:
+              json.dump(out, f, indent=2)
+
+          print(f"Saved {len(posts)} posts")
+          PYEOF
+
+      # Refresh the long-lived token so it never expires (needs GH_PAT secret with repo scope)
+      - name: Refresh access token
+        if: ${{ env.INSTAGRAM_TOKEN != '' }}
+        env:
+          INSTAGRAM_TOKEN: ${{ secrets.INSTAGRAM_TOKEN }}
+          GH_TOKEN: ${{ secrets.GH_PAT }}
+        run: |
+          NEW=$(curl -sf "https://graph.instagram.com/refresh_access_token?grant_type=ig_refresh_token&access_token=${INSTAGRAM_TOKEN}" \
+                | python3 -c "import sys,json; d=json.load(sys.stdin); print(d.get('access_token',''))" 2>/dev/null || echo "")
+          if [ -n "$NEW" ] && [ "$NEW" != "$INSTAGRAM_TOKEN" ] && [ -n "$GH_TOKEN" ]; then
+            echo "::add-mask::$NEW"
+            gh secret set INSTAGRAM_TOKEN --body "$NEW" --repo weliwattamining/weliwattamining.github.io
+            echo "Token refreshed"
+          else
+            echo "Token refresh skipped (unchanged or GH_PAT not set)"
+          fi
+
+      - name: Commit feed
+        run: |
+          git config user.email "action@github.com"
+          git config user.name "Instagram Feed Bot"
+          git add assets/ig/ assets/instagram-feed.json
+          git diff --staged --quiet || git commit -m "Refresh Instagram feed [skip ci]" && git push || true
