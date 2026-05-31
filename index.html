@@ -477,7 +477,7 @@
       if (anchorType) {
         parts.push(`<polygon class="anchor anchor-${anchorType}" points="${pts}"/>`);
       } else {
-        parts.push(`<polygon points="${pts}" style="--base:${base};--mid:${mid};--peak:${peak};--d:${delay.toFixed(2)}s"/>`);
+        parts.push(`<polygon points="${pts}" style="--base:${base};--mid:${mid};--peak:${peak};--d:${delay.toFixed(2)}s;--facet-dur:${DUR}s"/>`);
       }
     });
     parts.push('</svg>');
