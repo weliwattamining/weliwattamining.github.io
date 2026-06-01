@@ -1836,7 +1836,6 @@
       <a href="#mine">The Mines</a>
       <a href="#finds">Stones</a>
       <a href="#m2m">Mine to Market</a>
-      <a href="#field">The Field</a>
     </nav>
     <!-- Mobile hamburger — toggles .nav-drawer; only visible below 980px -->
     <button class="nav-burger" id="navBurger" aria-label="Open menu" aria-expanded="false" aria-controls="navDrawer">
@@ -1851,7 +1850,6 @@
       <a href="#mine">The Mines</a>
       <a href="#finds">Stones</a>
       <a href="#m2m">Mine to Market</a>
-      <a href="#field">The Field</a>
       <a href="#contact" data-open-inquiry class="drawer-cta">Contact Us</a>
     </nav>
     <div class="drawer-foot">
@@ -2394,7 +2392,7 @@
     links.forEach(a => {
       const id = a.getAttribute('href').slice(1);
       const sec = document.getElementById(id);
-      if (sec) map.set(sec, a);
+      if (sec && sec.style.display !== 'none') map.set(sec, a);
     });
     if (!map.size) return;
 
