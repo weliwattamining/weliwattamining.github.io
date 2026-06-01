@@ -2355,7 +2355,7 @@
     });
     // Load tweaks after Babel is ready
     window.addEventListener('load', () => {
-      ['tweaks-panel.jsx','tweaks-app.jsx'].forEach(src => {
+      ['../tweaks-panel.jsx','../tweaks-app.jsx'].forEach(src => {
         const s = document.createElement('script'); s.type = 'text/babel'; s.src = src; document.body.appendChild(s);
       });
     });
