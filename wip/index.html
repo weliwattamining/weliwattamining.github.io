@@ -716,6 +716,20 @@
     animation: rec-pulse 2s ease-in-out infinite;
   }
   @keyframes rec-pulse { 0%, 100% { opacity: 0.6; } 50% { opacity: 1; } }
+  .mine-video .fs-btn {
+    background: transparent;
+    border: 1px solid rgba(247, 242, 234, 0.35);
+    color: var(--ivory);
+    width: 30px; height: 30px;
+    display: grid; place-items: center;
+    cursor: pointer;
+    padding: 0;
+    margin-left: 6px;
+    transition: border-color 0.2s ease, background 0.2s ease;
+    flex-shrink: 0;
+  }
+  .mine-video .fs-btn:hover { border-color: var(--gold); background: rgba(191,164,111,0.12); }
+  .mine-video .fs-btn svg { width: 14px; height: 14px; }
 
   /* Thumbnail chapter strip below the player */
   .mine-chapters {
@@ -1981,6 +1995,11 @@
         <div class="runtime">
           <span class="dot"></span>
           <span id="mineRuntime">00:16</span>
+          <button class="fs-btn" id="mineFullscreen" aria-label="Fullscreen">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true">
+              <path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"/>
+            </svg>
+          </button>
         </div>
       </div>
 
@@ -2492,7 +2511,6 @@
     });
 
     btn.addEventListener('click', () => {
-      // If no src is loaded yet, try loading the active chapter first
       if (!video.src) {
         const active = document.querySelector('#mineChapters .chap.active');
         if (active && active.dataset.src) loadChapter(active);
@@ -2505,6 +2523,53 @@
         player.classList.remove('playing');
       }
     });
+
+    // ── Timer: count up while playing ──
+    const fmtTime = s => {
+      const m = Math.floor(s / 60), sec = Math.floor(s % 60);
+      return String(m).padStart(2,'0') + ':' + String(sec).padStart(2,'0');
+    };
+    video.addEventListener('timeupdate', () => {
+      if (!video.paused) runtime.textContent = fmtTime(video.currentTime);
+    });
+    video.addEventListener('pause', () => {
+      const active = document.querySelector('#mineChapters .chap.active');
+      if (active) runtime.textContent = active.dataset.dur || '';
+    });
+    video.addEventListener('ended', () => {
+      const active = document.querySelector('#mineChapters .chap.active');
+      if (active) runtime.textContent = active.dataset.dur || '';
+    });
+
+    // ── Fullscreen button ──
+    const fsBtn = document.getElementById('mineFullscreen');
+    if (fsBtn) {
+      fsBtn.addEventListener('click', () => {
+        if (!document.fullscreenElement) {
+          (player.requestFullscreen || player.webkitRequestFullscreen || player.mozRequestFullScreen).call(player);
+        } else {
+          (document.exitFullscreen || document.webkitExitFullscreen || document.mozCancelFullScreen).call(document);
+        }
+      });
+    }
+
+    // ── Auto-play chapter 3 on scroll into view (once) ──
+    const mineSection = document.getElementById('mine');
+    if (mineSection && chapters[2]) {
+      let triggered = false;
+      const mineObserver = new IntersectionObserver((entries) => {
+        entries.forEach(e => {
+          if (e.isIntersecting && !triggered) {
+            triggered = true;
+            mineObserver.disconnect();
+            loadChapter(chapters[2]);
+            video.muted = true;
+            video.play().then(() => player.classList.add('playing')).catch(() => {});
+          }
+        });
+      }, { threshold: 0.4 });
+      mineObserver.observe(mineSection);
+    }
 
   })();
 
