@@ -127,6 +127,7 @@
     justify-content: space-between;
     padding: 22px 56px;
     gap: 24px;
+    position: relative;
   }
   .brandmark {
     display: flex; align-items: center; gap: 14px;
@@ -144,6 +145,9 @@
     display: flex; gap: 34px;
     font-size: 13px; letter-spacing: 0.04em;
     color: rgba(247, 242, 234, 0.78);
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
   }
   .nav-links a { transition: color 0.2s ease; position: relative; padding: 4px 0; }
   .nav-links a:hover { color: var(--gold); }
