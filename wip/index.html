@@ -2215,7 +2215,7 @@
       <!-- Single film replaces the four-card grid. Drop a real .mp4/.webm into ethical-vid src, or drag-drop onto the player. -->
       <div class="ethical-video" id="ethicalVid">
         <image-slot id="ethical-poster" loading="lazy" class="poster" shape="rect" src="../assets/photo-ethical.jpg" placeholder="Closed-loop wash plant — silt settling ponds, clear water returning to the pit"></image-slot>
-        <video id="ethicalVidEl" preload="metadata" playsinline muted loop poster="../assets/photo-ethical.jpg"></video>
+        <video id="ethicalVidEl" preload="metadata" playsinline muted loop poster="../assets/photo-ethical.jpg" src="../assets/ranji_bass_sorting_gravel.mp4"></video>
         <div class="veil" aria-hidden="true" style="height: 550px"></div>
         <button class="play-btn" id="ethicalPlayBtn" aria-label="Play sourcing film">
           <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M5 3 L21 12 L5 21 Z"/></svg>
@@ -2297,14 +2297,14 @@
         </div>
         <p>Family-owned Ceylon sapphire mining company based in Pathakada, Sri Lanka. Mine-to-market sapphires for collectors, jewelers, and high jewelry houses around the world. Private sourcing inquiries welcome.</p>
         <div class="social-row" aria-label="Social media">
-          <a href="https://instagram.com/weliwatta" target="_blank" rel="noopener" aria-label="Instagram">
+          <a href="https://instagram.com/weliwatta_mining" target="_blank" rel="noopener" aria-label="Instagram">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6">
               <rect x="3" y="3" width="18" height="18" rx="5"/>
               <circle cx="12" cy="12" r="4"/>
               <circle cx="17.5" cy="6.5" r="0.9" fill="currentColor" stroke="none"/>
             </svg>
           </a>
-          <a href="https://wa.me/94000000000" target="_blank" rel="noopener" aria-label="WhatsApp">
+          <a href="https://wa.me/19176008055" target="_blank" rel="noopener" aria-label="WhatsApp">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
               <path d="M20.5 11.6a8.5 8.5 0 1 1-3.4-6.8L20.5 3l-1.2 4.2a8.4 8.4 0 0 1 1.2 4.4Z"/>
               <path d="M8.2 8.6c.3-.1.6 0 .8.3l.7 1.4c.1.2 0 .5-.1.7l-.5.6a5.5 5.5 0 0 0 2.5 2.5l.6-.5c.2-.1.5-.2.7-.1l1.4.7c.3.2.4.5.3.8a2.6 2.6 0 0 1-2.7 1.6 6 6 0 0 1-5.3-5.3 2.6 2.6 0 0 1 1.6-2.7Z"/>
@@ -2329,7 +2329,6 @@
         <h5>Contact</h5>
         <ul>
           <li><a href="mailto:roshen@weliwatta.com">roshen@weliwatta.com</a></li>
-          <li><a href="tel:+19176008055">+1 917 600 8055</a></li>
           <li><a href="https://wa.me/19176008055" target="_blank" rel="noopener">WhatsApp · +1 917 600 8055</a></li>
           <li>Buyer inquiries, mine site visits, and sourcing requests by appointment.</li>
         </ul>
@@ -2493,7 +2492,12 @@
     }
 
     chapters.forEach(chap => {
-      chap.addEventListener('click', () => loadChapter(chap));
+      chap.addEventListener('click', () => {
+        loadChapter(chap);
+        if (chap.dataset.src) {
+          video.play().then(() => player.classList.add('playing')).catch(() => {});
+        }
+      });
     });
 
     // Pre-load the active chapter on init so play button works immediately
