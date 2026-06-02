@@ -1995,6 +1995,16 @@
         <div class="runtime">
           <span class="dot"></span>
           <span id="mineRuntime">00:16</span>
+          <button class="fs-btn" id="mineVolume" aria-label="Unmute">
+            <!-- muted icon (default) -->
+            <svg id="mineVolOff" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true">
+              <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><line x1="23" y1="9" x2="17" y2="15"/><line x1="17" y1="9" x2="23" y2="15"/>
+            </svg>
+            <!-- unmuted icon (hidden until unmuted) -->
+            <svg id="mineVolOn" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true" style="display:none">
+              <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14"/>
+            </svg>
+          </button>
           <button class="fs-btn" id="mineFullscreen" aria-label="Fullscreen">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true">
               <path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"/>
@@ -2541,6 +2551,19 @@
       if (active) runtime.textContent = active.dataset.dur || '';
     });
 
+    // ── Volume toggle ──
+    const volBtn  = document.getElementById('mineVolume');
+    const volOff  = document.getElementById('mineVolOff');
+    const volOn   = document.getElementById('mineVolOn');
+    if (volBtn) {
+      volBtn.addEventListener('click', () => {
+        video.muted = !video.muted;
+        volOff.style.display = video.muted ? '' : 'none';
+        volOn.style.display  = video.muted ? 'none' : '';
+        volBtn.setAttribute('aria-label', video.muted ? 'Unmute' : 'Mute');
+      });
+    }
+
     // ── Fullscreen button ──
     const fsBtn = document.getElementById('mineFullscreen');
     if (fsBtn) {
@@ -2553,17 +2576,19 @@
       });
     }
 
-    // ── Auto-play chapter 3 on scroll into view (once) ──
+    // ── Auto-play chapter 4 on scroll into view (once, muted) ──
     const mineSection = document.getElementById('mine');
-    if (mineSection && chapters[2]) {
+    if (mineSection && chapters[3]) {
       let triggered = false;
       const mineObserver = new IntersectionObserver((entries) => {
         entries.forEach(e => {
           if (e.isIntersecting && !triggered) {
             triggered = true;
             mineObserver.disconnect();
-            loadChapter(chapters[2]);
+            loadChapter(chapters[3]);
             video.muted = true;
+            volOff.style.display = '';
+            volOn.style.display  = 'none';
             video.play().then(() => player.classList.add('playing')).catch(() => {});
           }
         });
