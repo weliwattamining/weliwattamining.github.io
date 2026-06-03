@@ -1495,11 +1495,15 @@
      ═══════════════════════════════════════════════════════════ */
 
   /* Hard guard against horizontal scroll at any width.
-     Only on <html> — putting it on <body> too creates a second
-     scroll container and breaks vertical window scrolling. */
+     overflow-x: clip on body doesn't create a scroll container (unlike hidden)
+     so position:fixed elements and vertical scrolling are unaffected. */
   html { overflow-x: hidden; }
-  body { max-width: 100%; }
+  body { max-width: 100%; overflow-x: clip; }
   img, video, image-slot { max-width: 100%; }
+
+  /* Contain hero decorative layers so they can never bleed into the page width */
+  .hero-motion { overflow: clip; }
+  .hero-facets { overflow: clip; }
 
   /* ───────────── TABLET · 768–1023px ───────────── */
   @media (max-width: 1023px) {
@@ -1595,11 +1599,11 @@
     .mine-chapters .chap .meta { letter-spacing: 0.12em; }
     .footer-top h5 { letter-spacing: 0.16em; }
 
-    /* Hero — full-height, breathing room, readable body */
-    .hero { min-height: 100svh; }
-    .hero-inner { padding-top: 110px; }
-    .hero-content { max-width: 100%; padding-bottom: 56px; }
-    .hero-sub { max-width: 100%; font-size: 16px; line-height: 1.62; }
+    /* Hero — full-height using dvh (accounts for browser chrome on iOS/Android) */
+    .hero { min-height: 100dvh; }
+    .hero-inner { padding-top: 72px; min-height: 100dvh; }
+    .hero-content { max-width: 100%; padding-bottom: 44px; }
+    .hero-sub { max-width: 100%; font-size: 15px; line-height: 1.58; }
 
     /* CTA rows stack full-width with comfortable tap height */
     .hero-ctas, .final-ctas { flex-direction: column; align-items: stretch; gap: 12px; }
@@ -1704,6 +1708,9 @@
       scrollbar-width: none;
       border-top: 0;
       padding-top: 3px;
+      /* Override tablet bleed — mobile container is 22px, not 44px */
+      margin-left: -22px; margin-right: -22px;
+      padding-left: 22px; padding-right: 22px;
     }
     .timeline::before { display: none; }
     .timeline::-webkit-scrollbar { display: none; }
@@ -2640,7 +2647,7 @@
     const host = document.querySelector('.hero-facets');
     if (!host) return;
     const rect = host.getBoundingClientRect();
-    const w = Math.max(800, Math.round(rect.width));
+    const w = Math.max(Math.round(window.innerWidth), Math.round(rect.width));
     const h = Math.max(600, Math.round(rect.height));
 
     const cols = Math.max(10, Math.round(w / 115));
