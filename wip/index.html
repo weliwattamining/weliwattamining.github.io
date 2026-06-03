@@ -1501,10 +1501,6 @@
   body { max-width: 100%; overflow-x: clip; }
   img, video, image-slot { max-width: 100%; }
 
-  /* Contain hero decorative layers so they can never bleed into the page width */
-  .hero-motion { overflow: clip; }
-  .hero-facets { overflow: clip; }
-
   /* ───────────── TABLET · 768–1023px ───────────── */
   @media (max-width: 1023px) {
     .container { padding: 0 44px; }
@@ -2647,7 +2643,7 @@
     const host = document.querySelector('.hero-facets');
     if (!host) return;
     const rect = host.getBoundingClientRect();
-    const w = Math.max(Math.round(window.innerWidth), Math.round(rect.width));
+    const w = Math.max(800, Math.round(rect.width));
     const h = Math.max(600, Math.round(rect.height));
 
     const cols = Math.max(10, Math.round(w / 115));
