@@ -649,6 +649,7 @@
       radial-gradient(70% 60% at 50% 50%, transparent 30%, rgba(2, 7, 13, 0.55) 100%),
       linear-gradient(180deg, rgba(2, 7, 13, 0.1) 0%, rgba(2, 7, 13, 0.55) 100%);
     z-index: 2;
+    pointer-events: none;
     transition: opacity 0.6s ease;
   }
   .mine-video.playing .veil { opacity: 0.4; }
@@ -664,6 +665,7 @@
     color: var(--ivory);
     cursor: pointer;
     z-index: 3;
+    touch-action: manipulation;
     display: grid; place-items: center;
     transition: background 0.3s ease, border-color 0.3s ease, transform 0.3s ease;
   }
@@ -728,6 +730,7 @@
     display: grid; place-items: center;
     cursor: pointer;
     padding: 0;
+    touch-action: manipulation;
     margin-left: 6px;
     transition: border-color 0.2s ease, background 0.2s ease;
     flex-shrink: 0;
@@ -1076,6 +1079,7 @@
     position: absolute; inset: 0;
     background: linear-gradient(180deg, rgba(2, 7, 13, 0.1) 30%, rgba(2, 7, 13, 0.7) 100%);
     z-index: 2;
+    pointer-events: none;
     transition: opacity 0.6s ease;
   }
   .ethical-video.playing .veil { opacity: 0.35; }
@@ -1091,6 +1095,7 @@
     color: var(--ivory);
     cursor: pointer;
     z-index: 3;
+    touch-action: manipulation;
     display: grid; place-items: center;
     transition: background 0.3s ease, border-color 0.3s ease, transform 0.3s ease;
   }
@@ -1525,6 +1530,7 @@
       scroll-snap-type: x mandatory;
       -webkit-overflow-scrolling: touch;
       scrollbar-width: none;
+      touch-action: pan-x;
       margin-left: -44px; margin-right: -44px;
       padding: 0 44px 1px;
     }
@@ -1621,6 +1627,7 @@
       scroll-snap-type: x mandatory;
       -webkit-overflow-scrolling: touch;
       scrollbar-width: none;
+      touch-action: pan-x;
       margin-left: -22px; margin-right: -22px;
       padding: 0 22px 1px;
     }
@@ -1651,6 +1658,7 @@
       overflow-x: auto;
       scroll-snap-type: x mandatory;
       -webkit-overflow-scrolling: touch;
+      touch-action: pan-x;
       scrollbar-width: none;
       /* let tiles bleed to the screen edges, then pad back in */
       margin-left: -22px; margin-right: -22px;
@@ -1677,6 +1685,7 @@
       overflow-x: auto;
       scroll-snap-type: x mandatory;
       -webkit-overflow-scrolling: touch;
+      touch-action: pan-x;
       scrollbar-width: none;
       margin-left: -22px; margin-right: -22px;
       padding: 4px 22px 6px;
