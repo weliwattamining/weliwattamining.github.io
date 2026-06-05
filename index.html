@@ -1137,43 +1137,32 @@
     transform: translate(-50%, -50%) scale(1.05) translateZ(0);
     -webkit-transform: translate(-50%, -50%) scale(1.05) translateZ(0);
   }
-  .ethical-video .play-btn svg { width: 20px; height: 20px; }
-  .ethical-video .play-btn .icon-play { display: block; margin-left: 3px; }
-  .ethical-video .play-btn .icon-pause { display: none; }
-  .ethical-video.playing .play-btn { opacity: 0; pointer-events: none; background: rgba(2,7,13,0.18); border-color: rgba(247,242,234,0.4); }
-  .ethical-video.playing .play-btn .icon-play { display: none; }
-  .ethical-video.playing .play-btn .icon-pause { display: block; }
-  .ethical-video.playing:hover .play-btn,
-  .ethical-video.playing.show-controls .play-btn { opacity: 1; pointer-events: auto; }
+  /* Ethical video play button — same as mine video */
+  .ethical-video .play-btn svg { width: 20px; height: 20px; margin-left: 3px; }
+  .ethical-video.playing .play-btn { opacity: 0; pointer-events: none; }
+  /* Runtime bar — same fade-in pattern as mine video */
+  .ethical-video .runtime { opacity: 1; transition: opacity 0.3s ease; }
+  .ethical-video.playing .runtime { opacity: 0; }
+  .ethical-video.playing:hover .runtime,
+  .ethical-video.playing.show-controls .runtime { opacity: 1; }
+  /* Ethical runtime pause icons */
+  .ethical-video .ethical-pause-btn .icon-play { display: block; margin-left: 2px; }
+  .ethical-video .ethical-pause-btn .icon-pause { display: none; }
+  .ethical-video.playing .ethical-pause-btn .icon-play { display: none; }
+  .ethical-video.playing .ethical-pause-btn .icon-pause { display: block; margin-left: 0; }
+  /* Ethical mute icons */
+  #ethicalVolOff { display: block; }
+  #ethicalVolOn  { display: none; }
+  .ethical-video.unmuted #ethicalVolOff { display: none; }
+  .ethical-video.unmuted #ethicalVolOn  { display: block; }
   .ethical-video .caption {
     position: absolute;
-    left: 28px; right: 28px; bottom: 26px;
+    left: 28px; bottom: 26px;
     z-index: 3;
     color: var(--ivory);
-    display: flex; align-items: flex-end; justify-content: space-between;
-    gap: 12px;
-  }
-  .ethical-video .caption .caption-text { flex: 1; }
-  .ethical-video .mute-btn {
-    flex-shrink: 0;
-    background: rgba(2,7,13,0.35);
-    border: 1px solid rgba(247,242,234,0.35);
-    border-radius: 50%;
-    width: 36px; height: 36px;
-    display: grid; place-items: center;
-    cursor: pointer; color: var(--ivory);
-    transition: all 0.2s;
-    touch-action: manipulation;
-    z-index: 3;
     transform: translateZ(0);
     -webkit-transform: translateZ(0);
   }
-  .ethical-video .mute-btn:hover { border-color: var(--gold); background: rgba(191,164,111,0.18); }
-  .ethical-video .mute-btn svg { width: 16px; height: 16px; }
-  .ethical-video .mute-btn .icon-muted { display: block; }
-  .ethical-video .mute-btn .icon-sound { display: none; }
-  .ethical-video.unmuted .mute-btn .icon-muted { display: none; }
-  .ethical-video.unmuted .mute-btn .icon-sound { display: block; }
   .ethical-video .caption .label {
     font-family: var(--mono);
     font-size: 10px; letter-spacing: 0.22em; text-transform: uppercase;
@@ -1594,7 +1583,7 @@
       scrollbar-width: none;
       touch-action: pan-x;
       margin-left: -44px; margin-right: -44px;
-      padding: 0 44px 2px;
+      padding: 0 44px 3px;
     }
     .trust-inner::-webkit-scrollbar { display: none; }
     .trust-cell {
@@ -1692,7 +1681,7 @@
       scrollbar-width: none;
       touch-action: pan-x;
       margin-left: -22px; margin-right: -22px;
-      padding: 0 22px 2px;
+      padding: 0 22px 3px;
     }
     .trust-inner::-webkit-scrollbar { display: none; }
     .trust-cell {
@@ -2302,19 +2291,22 @@
         <video id="ethicalVidEl" preload="metadata" playsinline muted loop poster="./assets/thumb-uradeniya.jpg" src="./assets/uradeniya_water_circulation.mp4"></video>
         <div class="veil" aria-hidden="true" style="height: 550px"></div>
         <button class="play-btn" id="ethicalPlayBtn" aria-label="Play sourcing film">
-          <svg class="icon-play" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M5 3 L21 12 L5 21 Z"/></svg>
-          <svg class="icon-pause" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><rect x="6" y="4" width="4" height="16" rx="1"/><rect x="14" y="4" width="4" height="16" rx="1"/></svg>
+          <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M5 3 L21 12 L5 21 Z"/></svg>
         </button>
         <div class="caption">
-          <div class="caption-text">
-            <div class="label">Field Film · The Wash Loop</div>
-            <h4>How we mine without muddying the river.</h4>
-          </div>
-          <button class="mute-btn" id="ethicalMuteBtn" aria-label="Toggle mute">
-            <svg class="icon-muted" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round">
+          <div class="label">Field Film · The Wash Loop</div>
+          <h4>How we mine without muddying the river.</h4>
+        </div>
+        <div class="runtime" id="ethicalRuntime">
+          <button class="fs-btn ethical-pause-btn" id="ethicalRuntimePause" aria-label="Pause">
+            <svg class="icon-play" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M5 3 L21 12 L5 21 Z"/></svg>
+            <svg class="icon-pause" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><rect x="6" y="4" width="4" height="16" rx="1"/><rect x="14" y="4" width="4" height="16" rx="1"/></svg>
+          </button>
+          <button class="fs-btn" id="ethicalMuteBtn" aria-label="Unmute">
+            <svg id="ethicalVolOff" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true">
               <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><line x1="23" y1="9" x2="17" y2="15"/><line x1="17" y1="9" x2="23" y2="15"/>
             </svg>
-            <svg class="icon-sound" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round">
+            <svg id="ethicalVolOn" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true" style="display:none">
               <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14"/>
             </svg>
           </button>
@@ -2697,10 +2689,56 @@
 
   // ───── Ethical sourcing film player ─────
   (function initEthicalVideo() {
-    const player = document.getElementById('ethicalVid');
+    const player  = document.getElementById('ethicalVid');
     if (!player) return;
-    const video = document.getElementById('ethicalVidEl');
-    const btn = document.getElementById('ethicalPlayBtn');
+    const video   = document.getElementById('ethicalVidEl');
+    const playBtn = document.getElementById('ethicalPlayBtn');
+    const pauseBtn= document.getElementById('ethicalRuntimePause');
+    const muteBtn = document.getElementById('ethicalMuteBtn');
+    const volOff  = document.getElementById('ethicalVolOff');
+    const volOn   = document.getElementById('ethicalVolOn');
+
+    function startPlay() { video.muted = true; video.play().then(() => player.classList.add('playing')).catch(() => {}); }
+    function togglePlay() {
+      if (video.paused) { video.play().then(() => player.classList.add('playing')).catch(() => {}); }
+      else { video.pause(); player.classList.remove('playing'); }
+    }
+
+    // Centered play button — start/stop
+    if (playBtn) playBtn.addEventListener('click', togglePlay);
+
+    // Runtime pause/play button
+    if (pauseBtn) pauseBtn.addEventListener('click', togglePlay);
+
+    // Mute/unmute
+    if (muteBtn) muteBtn.addEventListener('click', () => {
+      video.muted = !video.muted;
+      player.classList.toggle('unmuted', !video.muted);
+      if (volOff) volOff.style.display = video.muted ? '' : 'none';
+      if (volOn)  volOn.style.display  = video.muted ? 'none' : '';
+    });
+
+    video.addEventListener('ended', () => player.classList.remove('playing'));
+
+    // Tap: briefly show runtime controls (mobile)
+    player.addEventListener('touchstart', () => {
+      player.classList.add('show-controls');
+      clearTimeout(player._ctrlTimer);
+      player._ctrlTimer = setTimeout(() => player.classList.remove('show-controls'), 3000);
+    }, { passive: true });
+
+    // Autoplay on scroll into view (muted, once)
+    let ethTriggered = false;
+    const ethObs = new IntersectionObserver((entries) => {
+      entries.forEach(e => {
+        if (e.isIntersecting && !ethTriggered) {
+          ethTriggered = true;
+          ethObs.disconnect();
+          startPlay();
+        }
+      });
+    }, { threshold: 0.4 });
+    ethObs.observe(player);
 
     // Drag-drop a video onto the player for instant local preview
     ['dragover', 'dragenter'].forEach(ev =>
@@ -2724,46 +2762,6 @@
       video.play().then(() => player.classList.add('playing')).catch(() => {});
     });
 
-    btn.addEventListener('click', () => {
-      if (!video.currentSrc && !video.src) {
-        btn.animate(
-          [{ transform: 'translate(-50%, -50%) scale(1)' }, { transform: 'translate(-50%, -50%) scale(0.92)' }, { transform: 'translate(-50%, -50%) scale(1)' }],
-          { duration: 320 }
-        );
-        return;
-      }
-      if (video.paused) { video.play(); player.classList.add('playing'); }
-      else { video.pause(); player.classList.remove('playing'); }
-    });
-
-    const muteBtn = document.getElementById('ethicalMuteBtn');
-    if (muteBtn) {
-      muteBtn.addEventListener('click', () => {
-        video.muted = !video.muted;
-        player.classList.toggle('unmuted', !video.muted);
-      });
-    }
-
-    video.addEventListener('ended', () => player.classList.remove('playing'));
-
-    // Tap anywhere on video → briefly show runtime controls (mobile UX)
-    player.addEventListener('touchstart', () => {
-      player.classList.add('show-controls');
-      clearTimeout(player._ctrlTimer);
-      player._ctrlTimer = setTimeout(() => player.classList.remove('show-controls'), 3000);
-    }, { passive: true });
-  })();
-
-  // ── Ethical video tap-to-show-controls ──
-  (() => {
-    const player = document.getElementById('ethicalVid');
-    if (!player) return;
-    player.addEventListener('touchstart', () => {
-      if (!player.classList.contains('playing')) return;
-      player.classList.add('show-controls');
-      clearTimeout(player._ctrlTimer);
-      player._ctrlTimer = setTimeout(() => player.classList.remove('show-controls'), 3000);
-    }, { passive: true });
   })();
 
   // ───── Faceted sapphire hero ─────
