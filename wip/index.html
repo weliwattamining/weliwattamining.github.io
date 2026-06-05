@@ -691,9 +691,11 @@
   .mine-video .play-btn svg { width: 22px; height: 22px; margin-left: 4px; }
   .mine-video .play-btn .icon-play { display: block; margin-left: 3px; }
   .mine-video .play-btn .icon-pause { display: none; }
-  .mine-video.playing .play-btn { opacity: 1; pointer-events: auto; background: rgba(2,7,13,0.18); border-color: rgba(247,242,234,0.35); }
+  .mine-video.playing .play-btn { opacity: 0; pointer-events: none; background: rgba(2,7,13,0.18); border-color: rgba(247,242,234,0.35); }
   .mine-video.playing .play-btn .icon-play { display: none; }
   .mine-video.playing .play-btn .icon-pause { display: block; }
+  .mine-video.playing:hover .play-btn,
+  .mine-video.playing.show-controls .play-btn { opacity: 1; pointer-events: auto; }
   .mine-video .play-label {
     position: absolute;
     left: 50%; top: calc(50% + 70px);
@@ -1131,9 +1133,11 @@
   .ethical-video .play-btn svg { width: 20px; height: 20px; }
   .ethical-video .play-btn .icon-play { display: block; margin-left: 3px; }
   .ethical-video .play-btn .icon-pause { display: none; }
-  .ethical-video.playing .play-btn { opacity: 1; pointer-events: auto; background: rgba(2,7,13,0.18); border-color: rgba(247,242,234,0.4); }
+  .ethical-video.playing .play-btn { opacity: 0; pointer-events: none; background: rgba(2,7,13,0.18); border-color: rgba(247,242,234,0.4); }
   .ethical-video.playing .play-btn .icon-play { display: none; }
   .ethical-video.playing .play-btn .icon-pause { display: block; }
+  .ethical-video.playing:hover .play-btn,
+  .ethical-video.playing.show-controls .play-btn { opacity: 1; pointer-events: auto; }
   .ethical-video .caption {
     position: absolute;
     left: 28px; right: 28px; bottom: 26px;
@@ -1583,7 +1587,7 @@
       scrollbar-width: none;
       touch-action: pan-x;
       margin-left: -44px; margin-right: -44px;
-      padding: 0 44px 1px;
+      padding: 0 44px 2px;
     }
     .trust-inner::-webkit-scrollbar { display: none; }
     .trust-cell {
@@ -1596,6 +1600,7 @@
     }
     .trust-cell:first-child { border-left: 1px solid var(--line-dark); }
     .trust-cell:nth-child(2) { border-right: 1px solid var(--line-dark); }
+    .trust-inner .trust-cell { touch-action: pan-x; }
 
     /* Archive grid → 2-up (cleaner than cramped 3 / lonely 1) */
     .finds-grid { grid-template-columns: 1fr 1fr; }
@@ -1680,7 +1685,7 @@
       scrollbar-width: none;
       touch-action: pan-x;
       margin-left: -22px; margin-right: -22px;
-      padding: 0 22px 1px;
+      padding: 0 22px 2px;
     }
     .trust-inner::-webkit-scrollbar { display: none; }
     .trust-cell {
@@ -1693,6 +1698,7 @@
       border-bottom: 1px solid var(--line-dark);
     }
     .trust-cell:first-child { border-left: 1px solid var(--line-dark); }
+    .trust-inner .trust-cell { touch-action: pan-x; }
     .trust-cell .n { font-size: clamp(38px, 11vw, 46px) !important; line-height: 1.05; }
     .trust-cell p { font-size: 15px; }
 
@@ -1717,7 +1723,7 @@
     }
     .mine-chapters::-webkit-scrollbar { display: none; }
     .mine-chapters .chap,
-    .mine-chapters image-slot { touch-action: pan-x; }
+    .mine-chapters image-slot { touch-action: pan-x; pointer-events: none; }
     .mine-chapters .chap {
       flex: 0 0 64%;
       max-width: 260px;
@@ -1745,8 +1751,8 @@
     }
     .finds-grid::-webkit-scrollbar { display: none; }
     .finds-grid .stone-card,
-    .finds-grid .stone-card .pic,
-    .finds-grid image-slot { touch-action: pan-x; }
+    .finds-grid .stone-card .pic { touch-action: pan-x; }
+    .finds-grid image-slot { touch-action: pan-x; pointer-events: none; }
     .finds-grid .stone-card {
       flex: 0 0 78%;
       max-width: 320px;
@@ -2721,6 +2727,26 @@
     }
 
     video.addEventListener('ended', () => player.classList.remove('playing'));
+
+    // Tap anywhere on video while playing → briefly show controls (mobile UX)
+    player.addEventListener('touchstart', () => {
+      if (!player.classList.contains('playing')) return;
+      player.classList.add('show-controls');
+      clearTimeout(player._ctrlTimer);
+      player._ctrlTimer = setTimeout(() => player.classList.remove('show-controls'), 3000);
+    }, { passive: true });
+  })();
+
+  // ── Ethical video tap-to-show-controls ──
+  (() => {
+    const player = document.getElementById('ethicalVid');
+    if (!player) return;
+    player.addEventListener('touchstart', () => {
+      if (!player.classList.contains('playing')) return;
+      player.classList.add('show-controls');
+      clearTimeout(player._ctrlTimer);
+      player._ctrlTimer = setTimeout(() => player.classList.remove('show-controls'), 3000);
+    }, { passive: true });
   })();
 
   // ───── Faceted sapphire hero ─────
