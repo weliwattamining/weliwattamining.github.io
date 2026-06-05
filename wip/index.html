@@ -1124,14 +1124,41 @@
     transform: translate(-50%, -50%) scale(1.05) translateZ(0);
     -webkit-transform: translate(-50%, -50%) scale(1.05) translateZ(0);
   }
-  .ethical-video .play-btn svg { width: 20px; height: 20px; margin-left: 4px; }
-  .ethical-video.playing .play-btn { opacity: 0; pointer-events: none; }
+  .ethical-video .play-btn svg { width: 20px; height: 20px; }
+  .ethical-video .play-btn .icon-play { display: block; margin-left: 3px; }
+  .ethical-video .play-btn .icon-pause { display: none; }
+  .ethical-video.playing .play-btn { opacity: 1; pointer-events: auto; background: rgba(2,7,13,0.18); border-color: rgba(247,242,234,0.4); }
+  .ethical-video.playing .play-btn .icon-play { display: none; }
+  .ethical-video.playing .play-btn .icon-pause { display: block; }
   .ethical-video .caption {
     position: absolute;
     left: 28px; right: 28px; bottom: 26px;
     z-index: 3;
     color: var(--ivory);
+    display: flex; align-items: flex-end; justify-content: space-between;
+    gap: 12px;
   }
+  .ethical-video .caption .caption-text { flex: 1; }
+  .ethical-video .mute-btn {
+    flex-shrink: 0;
+    background: rgba(2,7,13,0.35);
+    border: 1px solid rgba(247,242,234,0.35);
+    border-radius: 50%;
+    width: 36px; height: 36px;
+    display: grid; place-items: center;
+    cursor: pointer; color: var(--ivory);
+    transition: all 0.2s;
+    touch-action: manipulation;
+    z-index: 3;
+    transform: translateZ(0);
+    -webkit-transform: translateZ(0);
+  }
+  .ethical-video .mute-btn:hover { border-color: var(--gold); background: rgba(191,164,111,0.18); }
+  .ethical-video .mute-btn svg { width: 16px; height: 16px; }
+  .ethical-video .mute-btn .icon-muted { display: block; }
+  .ethical-video .mute-btn .icon-sound { display: none; }
+  .ethical-video.unmuted .mute-btn .icon-muted { display: none; }
+  .ethical-video.unmuted .mute-btn .icon-sound { display: block; }
   .ethical-video .caption .label {
     font-family: var(--mono);
     font-size: 10px; letter-spacing: 0.22em; text-transform: uppercase;
@@ -2255,11 +2282,22 @@
         <video id="ethicalVidEl" preload="metadata" playsinline muted loop poster="./assets/thumb-uradeniya.jpg" src="./assets/uradeniya_water_circulation.mp4"></video>
         <div class="veil" aria-hidden="true" style="height: 550px"></div>
         <button class="play-btn" id="ethicalPlayBtn" aria-label="Play sourcing film">
-          <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M5 3 L21 12 L5 21 Z"/></svg>
+          <svg class="icon-play" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M5 3 L21 12 L5 21 Z"/></svg>
+          <svg class="icon-pause" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><rect x="6" y="4" width="4" height="16" rx="1"/><rect x="14" y="4" width="4" height="16" rx="1"/></svg>
         </button>
         <div class="caption">
-          <div class="label">Field Film · The Wash Loop</div>
-          <h4>How we mine without muddying the river.</h4>
+          <div class="caption-text">
+            <div class="label">Field Film · The Wash Loop</div>
+            <h4>How we mine without muddying the river.</h4>
+          </div>
+          <button class="mute-btn" id="ethicalMuteBtn" aria-label="Toggle mute">
+            <svg class="icon-muted" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round">
+              <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><line x1="23" y1="9" x2="17" y2="15"/><line x1="17" y1="9" x2="23" y2="15"/>
+            </svg>
+            <svg class="icon-sound" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round">
+              <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14"/>
+            </svg>
+          </button>
         </div>
       </div>
     </div>
@@ -2668,6 +2706,14 @@
       if (video.paused) { video.play(); player.classList.add('playing'); }
       else { video.pause(); player.classList.remove('playing'); }
     });
+
+    const muteBtn = document.getElementById('ethicalMuteBtn');
+    if (muteBtn) {
+      muteBtn.addEventListener('click', () => {
+        video.muted = !video.muted;
+        player.classList.toggle('unmuted', !video.muted);
+      });
+    }
 
     video.addEventListener('ended', () => player.classList.remove('playing'));
   })();
