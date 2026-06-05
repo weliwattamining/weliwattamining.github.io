@@ -691,11 +691,18 @@
   .mine-video .play-btn svg { width: 22px; height: 22px; margin-left: 4px; }
   .mine-video .play-btn .icon-play { display: block; margin-left: 3px; }
   .mine-video .play-btn .icon-pause { display: none; }
-  .mine-video.playing .play-btn { opacity: 0; pointer-events: none; background: rgba(2,7,13,0.18); border-color: rgba(247,242,234,0.35); }
-  .mine-video.playing .play-btn .icon-play { display: none; }
-  .mine-video.playing .play-btn .icon-pause { display: block; }
-  .mine-video.playing:hover .play-btn,
-  .mine-video.playing.show-controls .play-btn { opacity: 1; pointer-events: auto; }
+  /* When playing: hide big centered play button entirely */
+  .mine-video.playing .play-btn { opacity: 0; pointer-events: none; }
+  /* Runtime bar: always visible when not playing; fades on playing, reappears on hover/tap */
+  .mine-video .runtime { opacity: 1; transition: opacity 0.3s ease; }
+  .mine-video.playing .runtime { opacity: 0; }
+  .mine-video.playing:hover .runtime,
+  .mine-video.playing.show-controls .runtime { opacity: 1; }
+  /* Runtime inline pause/play button icons */
+  .mine-video .runtime-pause-btn .icon-play { display: block; margin-left: 2px; }
+  .mine-video .runtime-pause-btn .icon-pause { display: none; }
+  .mine-video.playing .runtime-pause-btn .icon-play { display: none; }
+  .mine-video.playing .runtime-pause-btn .icon-pause { display: block; margin-left: 0; }
   .mine-video .play-label {
     position: absolute;
     left: 50%; top: calc(50% + 70px);
@@ -2072,14 +2079,16 @@
           <h4 id="mineCaption">The Sapphire Valley.</h4>
         </div>
         <div class="runtime">
+          <button class="fs-btn runtime-pause-btn" id="mineRuntimePause" aria-label="Pause">
+            <svg class="icon-play" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M5 3 L21 12 L5 21 Z"/></svg>
+            <svg class="icon-pause" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><rect x="6" y="4" width="4" height="16" rx="1"/><rect x="14" y="4" width="4" height="16" rx="1"/></svg>
+          </button>
           <span class="dot"></span>
           <span id="mineRuntime">00:16</span>
           <button class="fs-btn" id="mineVolume" aria-label="Unmute">
-            <!-- muted icon (default) -->
             <svg id="mineVolOff" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true">
               <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><line x1="23" y1="9" x2="17" y2="15"/><line x1="17" y1="9" x2="23" y2="15"/>
             </svg>
-            <!-- unmuted icon (hidden until unmuted) -->
             <svg id="mineVolOn" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true" style="display:none">
               <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14"/>
             </svg>
@@ -2643,6 +2652,15 @@
       });
     }
 
+    // ── Runtime pause/play button ──
+    const runtimePauseBtn = document.getElementById('mineRuntimePause');
+    if (runtimePauseBtn) {
+      runtimePauseBtn.addEventListener('click', () => {
+        if (video.paused) { video.play().then(() => player.classList.add('playing')).catch(() => {}); }
+        else { video.pause(); player.classList.remove('playing'); }
+      });
+    }
+
     // ── Fullscreen button ──
     const fsBtn = document.getElementById('mineFullscreen');
     if (fsBtn) {
@@ -2728,9 +2746,8 @@
 
     video.addEventListener('ended', () => player.classList.remove('playing'));
 
-    // Tap anywhere on video while playing → briefly show controls (mobile UX)
+    // Tap anywhere on video → briefly show runtime controls (mobile UX)
     player.addEventListener('touchstart', () => {
-      if (!player.classList.contains('playing')) return;
       player.classList.add('show-controls');
       clearTimeout(player._ctrlTimer);
       player._ctrlTimer = setTimeout(() => player.classList.remove('show-controls'), 3000);
