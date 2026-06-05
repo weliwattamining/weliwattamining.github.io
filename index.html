@@ -689,7 +689,11 @@
     -webkit-transform: translate(-50%, -50%) scale(1.05) translateZ(0);
   }
   .mine-video .play-btn svg { width: 22px; height: 22px; margin-left: 4px; }
-  .mine-video.playing .play-btn { opacity: 0; pointer-events: none; }
+  .mine-video .play-btn .icon-play { display: block; margin-left: 3px; }
+  .mine-video .play-btn .icon-pause { display: none; }
+  .mine-video.playing .play-btn { opacity: 1; pointer-events: auto; background: rgba(2,7,13,0.18); border-color: rgba(247,242,234,0.35); }
+  .mine-video.playing .play-btn .icon-play { display: none; }
+  .mine-video.playing .play-btn .icon-pause { display: block; }
   .mine-video .play-label {
     position: absolute;
     left: 50%; top: calc(50% + 70px);
@@ -2052,7 +2056,8 @@
         <div class="veil" aria-hidden="true"></div>
 
         <button class="play-btn" id="minePlayBtn" aria-label="Play mine documentary">
-          <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M5 3 L21 12 L5 21 Z"/></svg>
+          <svg class="icon-play" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M5 3 L21 12 L5 21 Z"/></svg>
+          <svg class="icon-pause" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><rect x="6" y="4" width="4" height="16" rx="1"/><rect x="14" y="4" width="4" height="16" rx="1"/></svg>
         </button>
         <div class="play-label">Play · At the source</div>
 
