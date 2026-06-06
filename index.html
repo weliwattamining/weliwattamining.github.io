@@ -856,8 +856,6 @@
   }
   @media (max-width: 700px) {
     .mine-chapters { grid-template-columns: repeat(2, 1fr); }
-    .mine-video .caption { left: 20px; bottom: 18px; right: 20px; max-width: none; }
-    .mine-video .runtime { right: 20px; bottom: 64px; }
   }
   .mine-cards {
     display: grid;
@@ -1529,10 +1527,12 @@
     .mine-video .play-btn { width: 64px; height: 64px; }
     .mine-video .play-btn svg { width: 16px; height: 16px; }
     .mine-video .play-label { display: none; }
-    .mine-video .runtime { opacity: 0; transition: opacity 0.3s ease; }
+    /* Runtime bar: sits at the very bottom; hidden while playing, tap to reveal */
+    .mine-video .runtime { right: 16px; bottom: 14px; gap: 10px; opacity: 0; transition: opacity 0.3s ease; }
     .mine-video.show-controls .runtime,
     .mine-video:not(.playing) .runtime { opacity: 1; }
-    .mine-video .caption { left: 20px; right: 20px; bottom: 64px; max-width: none; }
+    /* Caption: sits above the runtime bar */
+    .mine-video .caption { left: 20px; right: 20px; bottom: 52px; max-width: none; }
     .mine-video .caption h4 { font-size: 18px; }
 
     /* Drop the chapter thumbnail strip — dead weight on a phone */
