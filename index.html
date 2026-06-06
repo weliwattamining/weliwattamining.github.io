@@ -19,7 +19,8 @@
 <link rel="apple-touch-icon" href="assets/logo-mark-white.png" />
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+<link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" onload="this.onload=null;this.rel='stylesheet'" />
+<noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" /></noscript>
 <script src="image-slot.js" defer></script>
 <style>
   :root {
@@ -1141,10 +1142,19 @@
   .ethical-video .play-btn svg { width: 20px; height: 20px; margin-left: 3px; }
   .ethical-video.playing .play-btn { opacity: 0; pointer-events: none; }
   /* Runtime bar — same fade-in pattern as mine video */
-  .ethical-video .runtime { opacity: 1; transition: opacity 0.3s ease; }
-  .ethical-video.playing .runtime { opacity: 0; }
-  .ethical-video.playing:hover .runtime,
-  .ethical-video.playing.show-controls .runtime { opacity: 1; }
+  .ethical-video .runtime {
+    position: absolute;
+    right: 28px; bottom: 26px;
+    z-index: 3;
+    transform: translateZ(0);
+    -webkit-transform: translateZ(0);
+    font-family: var(--mono);
+    font-size: 10px; letter-spacing: 0.22em; text-transform: uppercase;
+    color: rgba(247, 242, 234, 0.7);
+    display: flex; gap: 12px; align-items: center;
+    opacity: 1; transition: opacity 0.3s ease;
+  }
+  .ethical-video .runtime { opacity: 1 !important; }
   /* Ethical runtime pause icons */
   .ethical-video .ethical-pause-btn .icon-play { display: block; margin-left: 2px; }
   .ethical-video .ethical-pause-btn .icon-pause { display: none; }
@@ -1519,8 +1529,10 @@
     .mine-video .play-btn { width: 64px; height: 64px; }
     .mine-video .play-btn svg { width: 16px; height: 16px; }
     .mine-video .play-label { display: none; }
-    .mine-video .runtime { display: none; }
-    .mine-video .caption { left: 20px; right: 20px; bottom: 20px; max-width: none; }
+    .mine-video .runtime { opacity: 0; transition: opacity 0.3s ease; }
+    .mine-video.show-controls .runtime,
+    .mine-video:not(.playing) .runtime { opacity: 1; }
+    .mine-video .caption { left: 20px; right: 20px; bottom: 64px; max-width: none; }
     .mine-video .caption h4 { font-size: 18px; }
 
     /* Drop the chapter thumbnail strip — dead weight on a phone */
@@ -1693,7 +1705,7 @@
       border-top: 1px solid var(--line-dark);
       border-bottom: 1px solid var(--line-dark);
     }
-    .trust-cell:first-child { border-left: 1px solid var(--line-dark); }
+    .trust-cell { border-left: 1px solid var(--line-dark); }
     .trust-inner .trust-cell { touch-action: pan-x; }
     .trust-cell .n { font-size: clamp(38px, 11vw, 46px) !important; line-height: 1.05; }
     .trust-cell p { font-size: 15px; }
@@ -1718,8 +1730,8 @@
       padding: 0 22px 4px;
     }
     .mine-chapters::-webkit-scrollbar { display: none; }
-    .mine-chapters .chap,
     .mine-chapters image-slot { touch-action: pan-x; pointer-events: none; }
+    .mine-chapters .chap { touch-action: manipulation; }
     .mine-chapters .chap {
       flex: 0 0 64%;
       max-width: 260px;
@@ -1747,8 +1759,8 @@
     }
     .finds-grid::-webkit-scrollbar { display: none; }
     .finds-grid .stone-card,
-    .finds-grid .stone-card .pic { touch-action: pan-x; }
-    .finds-grid image-slot { touch-action: pan-x; pointer-events: none; }
+    .finds-grid .stone-card .pic { touch-action: pan-x pan-y; }
+    .finds-grid image-slot { touch-action: pan-x pan-y; pointer-events: none; }
     .finds-grid .stone-card {
       flex: 0 0 78%;
       max-width: 320px;
@@ -2564,12 +2576,20 @@
     }
 
     chapters.forEach(chap => {
-      chap.addEventListener('click', () => {
+      function activateChap() {
         loadChapter(chap);
         if (chap.dataset.src) {
           video.play().then(() => player.classList.add('playing')).catch(() => {});
         }
-      });
+      }
+      // Inject a native <button> overlay — iOS Safari reliably fires click on
+      // native buttons even inside scroll-snap containers; div click events can drop.
+      const tapBtn = document.createElement('button');
+      tapBtn.setAttribute('aria-hidden', 'true');
+      tapBtn.setAttribute('tabindex', '-1');
+      tapBtn.style.cssText = 'position:absolute;inset:0;width:100%;height:100%;background:transparent;border:0;padding:0;cursor:pointer;z-index:4;-webkit-appearance:none;';
+      chap.appendChild(tapBtn);
+      tapBtn.addEventListener('click', activateChap);
     });
 
     // Pre-load the active chapter on init so play button works immediately
@@ -2664,6 +2684,13 @@
         }
       });
     }
+
+    // ── Tap: briefly show runtime controls on mobile ──
+    player.addEventListener('touchstart', () => {
+      player.classList.add('show-controls');
+      clearTimeout(player._ctrlTimer);
+      player._ctrlTimer = setTimeout(() => player.classList.remove('show-controls'), 3000);
+    }, { passive: true });
 
     // ── Auto-play chapter 4 on scroll into view (once, muted) ──
     const mineSection = document.getElementById('mine');
