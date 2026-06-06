@@ -2696,12 +2696,13 @@
       });
     }
 
-    // ── Tap: briefly show runtime controls on mobile ──
-    player.addEventListener('touchstart', () => {
+    // ── Tap or autoplay: briefly show runtime controls on mobile ──
+    function showMineControls() {
       player.classList.add('show-controls');
       clearTimeout(player._ctrlTimer);
       player._ctrlTimer = setTimeout(() => player.classList.remove('show-controls'), 3000);
-    }, { passive: true });
+    }
+    player.addEventListener('touchstart', showMineControls, { passive: true });
 
     // ── Auto-play chapter 4 on scroll into view (once, muted) ──
     const mineSection = document.getElementById('mine');
@@ -2716,7 +2717,10 @@
             video.muted = true;
             volOff.style.display = '';
             volOn.style.display  = 'none';
-            video.play().then(() => player.classList.add('playing')).catch(() => {});
+            video.play().then(() => {
+              player.classList.add('playing');
+              showMineControls(); // reveal controls on first autoplay
+            }).catch(() => {});
           }
         });
       }, { threshold: 0.4 });
@@ -2743,7 +2747,18 @@
       return String(m).padStart(2,'0') + ':' + String(sec).padStart(2,'0');
     };
 
-    function startPlay() { video.muted = true; video.play().then(() => player.classList.add('playing')).catch(() => {}); }
+    function showControlsBriefly() {
+      player.classList.add('show-controls');
+      clearTimeout(player._ctrlTimer);
+      player._ctrlTimer = setTimeout(() => player.classList.remove('show-controls'), 3000);
+    }
+    function startPlay() {
+      video.muted = true;
+      video.play().then(() => {
+        player.classList.add('playing');
+        showControlsBriefly(); // reveal controls on first autoplay so user sees them
+      }).catch(() => {});
+    }
     function togglePlay() {
       if (video.paused) { video.play().then(() => player.classList.add('playing')).catch(() => {}); }
       else { video.pause(); player.classList.remove('playing'); }
@@ -2782,11 +2797,7 @@
     video.addEventListener('ended', () => player.classList.remove('playing'));
 
     // Tap: briefly show runtime controls (mobile)
-    player.addEventListener('touchstart', () => {
-      player.classList.add('show-controls');
-      clearTimeout(player._ctrlTimer);
-      player._ctrlTimer = setTimeout(() => player.classList.remove('show-controls'), 3000);
-    }, { passive: true });
+    player.addEventListener('touchstart', showControlsBriefly, { passive: true });
 
     // Autoplay on scroll into view (muted, once)
     let ethTriggered = false;
