@@ -2143,7 +2143,7 @@
           <span class="dur">00:41</span>
           <span class="meta">04 · The Gravel Bed Excavation</span>
         </div>
-        <div class="chap" data-src="./assets/uradeniya_three_excavator_lineup.mp4" data-poster="./assets/thumb-lineup.jpg" data-caption="Excavator Relay." data-label="Chapter 05 · Excavator Relay" data-dur="00:38">
+        <div class="chap" data-src="./assets/uradeniya_three_excavator_lineup.mp4" data-poster="./assets/thumb-lineup.jpg" data-caption="Excavator Relay." data-label="Chapter 05 · Excavator Relay" data-dur="03:06">
           <image-slot id="chap-5" loading="lazy" shape="rect" src="./assets/thumb-lineup.jpg" placeholder=""></image-slot>
           <span class="chap-play" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M5 3 L21 12 L5 21 Z"/></svg></span>
           <span class="dur">03:06</span>
@@ -2201,7 +2201,7 @@
         </div>
         <div class="info">
           <div class="cat"><span>Fancy Sapphire</span><span class="status">Archive · 2021</span></div>
-          <h4>Pristine Golden Yellow </h4>
+          <h4>Pristine Golden Yellow</h4>
           <div class="specs"><span>33 ct</span><span>Sannasgama</span></div>
         </div>
       </article>
@@ -2211,8 +2211,8 @@
         </div>
         <div class="info">
           <div class="cat"><span>Blue Sapphire</span><span class="status">Archive · 2006</span></div>
-          <h4>The Pointed Blue </h4>
-          <div class="specs"><span>114.6ct</span><span>Ganegama</span></div>
+          <h4>The Pointed Blue</h4>
+          <div class="specs"><span>114.6 ct</span><span>Ganegama</span></div>
         </div>
       </article>
       <article class="stone-card">
@@ -2221,7 +2221,7 @@
         </div>
         <div class="info">
           <div class="cat"><span>Blue Sapphire</span><span class="status">Archive · 2024</span></div>
-          <h4>Smooth London Blue </h4>
+          <h4>Smooth London Blue</h4>
           <div class="specs"><span>104.3 ct</span><span>Pathakada</span></div>
         </div>
       </article>
@@ -2231,7 +2231,7 @@
         </div>
         <div class="info">
           <div class="cat"><span>Chrysoberyl</span><span class="status">Archive · 2022</span></div>
-          <h4>Cats-eye </h4>
+          <h4>Cat's-eye</h4>
           <div class="specs"><span>198 ct</span><span>Pathakada</span></div>
         </div>
       </article>
@@ -2241,7 +2241,7 @@
         </div>
         <div class="info">
           <div class="cat"><span>Blue Sapphire</span><span class="status">Archive · 2017</span></div>
-          <h4>Cornflower Blue Beauty </h4>
+          <h4>Cornflower Blue Beauty</h4>
           <div class="specs"><span>108 ct</span><span>Ratnapura</span></div>
         </div>
       </article>
@@ -2967,6 +2967,15 @@
     entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); } });
   }, { threshold: 0.12 });
   document.querySelectorAll('.reveal').forEach(el => io.observe(el));
+
+  // ───── Inquire buttons → WhatsApp ─────
+  document.querySelectorAll('[data-open-inquiry]').forEach(el => {
+    el.addEventListener('click', (e) => {
+      e.preventDefault();
+      const msg = encodeURIComponent('Hi, I\'m interested in stones from Weliwatta Mining Co. Could you tell me more about current availability?');
+      window.open('https://wa.me/19176008055?text=' + msg, '_blank', 'noopener');
+    });
+  });
 
   // ───── Instagram feed ─────
   (async function loadIgFeed() {
