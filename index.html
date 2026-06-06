@@ -1604,7 +1604,7 @@
       scroll-snap-type: x mandatory;
       -webkit-overflow-scrolling: touch;
       scrollbar-width: none;
-      touch-action: pan-x;
+      touch-action: pan-x pan-y;
       margin-left: -44px; margin-right: -44px;
       padding: 0 44px 3px;
     }
@@ -1619,7 +1619,7 @@
     }
     .trust-cell:first-child { border-left: 1px solid var(--line-dark); }
     .trust-cell:nth-child(2) { border-right: 1px solid var(--line-dark); }
-    .trust-inner .trust-cell { touch-action: pan-x; }
+    .trust-inner .trust-cell { touch-action: pan-x pan-y; }
 
     /* Archive grid → 2-up (cleaner than cramped 3 / lonely 1) */
     .finds-grid { grid-template-columns: 1fr 1fr; }
@@ -1702,7 +1702,7 @@
       scroll-snap-type: x mandatory;
       -webkit-overflow-scrolling: touch;
       scrollbar-width: none;
-      touch-action: pan-x;
+      touch-action: pan-x pan-y;
       margin-left: -22px; margin-right: -22px;
       padding: 0 22px 3px;
     }
@@ -1717,7 +1717,7 @@
       border-bottom: 1px solid var(--line-dark);
     }
     .trust-cell { border-left: 1px solid var(--line-dark); }
-    .trust-inner .trust-cell { touch-action: pan-x; }
+    .trust-inner .trust-cell { touch-action: pan-x pan-y; }
     .trust-cell .n { font-size: clamp(38px, 11vw, 46px) !important; line-height: 1.05; }
     .trust-cell p { font-size: 15px; }
 
@@ -1734,14 +1734,14 @@
       overflow-x: auto;
       scroll-snap-type: x mandatory;
       -webkit-overflow-scrolling: touch;
-      touch-action: pan-x;
+      touch-action: pan-x pan-y;
       scrollbar-width: none;
       /* let tiles bleed to the screen edges, then pad back in */
       margin-left: -22px; margin-right: -22px;
       padding: 0 22px 4px;
     }
     .mine-chapters::-webkit-scrollbar { display: none; }
-    .mine-chapters image-slot { touch-action: pan-x; pointer-events: none; }
+    .mine-chapters image-slot { touch-action: pan-x pan-y; pointer-events: none; }
     .mine-chapters .chap { touch-action: manipulation; }
     .mine-chapters .chap {
       flex: 0 0 64%;
@@ -1763,7 +1763,7 @@
       overflow-x: auto;
       scroll-snap-type: x mandatory;
       -webkit-overflow-scrolling: touch;
-      touch-action: pan-x;
+      touch-action: pan-x pan-y;
       scrollbar-width: none;
       margin-left: -22px; margin-right: -22px;
       padding: 4px 22px 6px;
