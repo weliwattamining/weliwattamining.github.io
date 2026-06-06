@@ -747,7 +747,8 @@
     color: rgba(247, 242, 234, 0.7);
     display: flex; gap: 16px; align-items: center;
   }
-  .mine-video .runtime .dot {
+  .mine-video .runtime .dot,
+  .ethical-video .runtime .dot {
     width: 5px; height: 5px; border-radius: 50%;
     background: var(--gold);
     box-shadow: 0 0 0 4px rgba(191, 164, 111, 0.2);
@@ -1152,7 +1153,10 @@
     display: flex; gap: 12px; align-items: center;
     opacity: 1; transition: opacity 0.3s ease;
   }
-  .ethical-video .runtime { opacity: 1 !important; }
+  /* Controls hidden while playing; tap reveals them for 3 s */
+  .ethical-video.playing .runtime { opacity: 0; }
+  .ethical-video:not(.playing) .runtime,
+  .ethical-video.playing.show-controls .runtime { opacity: 1; }
   /* Ethical runtime pause icons */
   .ethical-video .ethical-pause-btn .icon-play { display: block; margin-left: 2px; }
   .ethical-video .ethical-pause-btn .icon-pause { display: none; }
@@ -2314,12 +2318,19 @@
             <svg class="icon-play" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M5 3 L21 12 L5 21 Z"/></svg>
             <svg class="icon-pause" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><rect x="6" y="4" width="4" height="16" rx="1"/><rect x="14" y="4" width="4" height="16" rx="1"/></svg>
           </button>
+          <span class="dot"></span>
+          <span id="ethicalTimer">00:00</span>
           <button class="fs-btn" id="ethicalMuteBtn" aria-label="Unmute">
             <svg id="ethicalVolOff" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true">
               <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><line x1="23" y1="9" x2="17" y2="15"/><line x1="17" y1="9" x2="23" y2="15"/>
             </svg>
             <svg id="ethicalVolOn" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true" style="display:none">
               <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14"/>
+            </svg>
+          </button>
+          <button class="fs-btn" id="ethicalFullscreen" aria-label="Fullscreen">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true">
+              <path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"/>
             </svg>
           </button>
         </div>
@@ -2719,11 +2730,18 @@
     const player  = document.getElementById('ethicalVid');
     if (!player) return;
     const video   = document.getElementById('ethicalVidEl');
-    const playBtn = document.getElementById('ethicalPlayBtn');
-    const pauseBtn= document.getElementById('ethicalRuntimePause');
-    const muteBtn = document.getElementById('ethicalMuteBtn');
-    const volOff  = document.getElementById('ethicalVolOff');
-    const volOn   = document.getElementById('ethicalVolOn');
+    const playBtn  = document.getElementById('ethicalPlayBtn');
+    const pauseBtn = document.getElementById('ethicalRuntimePause');
+    const muteBtn  = document.getElementById('ethicalMuteBtn');
+    const volOff   = document.getElementById('ethicalVolOff');
+    const volOn    = document.getElementById('ethicalVolOn');
+    const timerEl  = document.getElementById('ethicalTimer');
+    const fsBtn    = document.getElementById('ethicalFullscreen');
+
+    const fmtTime = s => {
+      const m = Math.floor(s / 60), sec = Math.floor(s % 60);
+      return String(m).padStart(2,'0') + ':' + String(sec).padStart(2,'0');
+    };
 
     function startPlay() { video.muted = true; video.play().then(() => player.classList.add('playing')).catch(() => {}); }
     function togglePlay() {
@@ -2744,6 +2762,22 @@
       if (volOff) volOff.style.display = video.muted ? '' : 'none';
       if (volOn)  volOn.style.display  = video.muted ? 'none' : '';
     });
+
+    // Timer
+    video.addEventListener('timeupdate', () => {
+      if (timerEl && !video.paused) timerEl.textContent = fmtTime(video.currentTime);
+    });
+
+    // Fullscreen
+    if (fsBtn) {
+      fsBtn.addEventListener('click', () => {
+        if (!document.fullscreenElement) {
+          (player.requestFullscreen || player.webkitRequestFullscreen || player.mozRequestFullScreen).call(player);
+        } else {
+          (document.exitFullscreen || document.webkitExitFullscreen || document.mozCancelFullScreen).call(document);
+        }
+      });
+    }
 
     video.addEventListener('ended', () => player.classList.remove('playing'));
 
