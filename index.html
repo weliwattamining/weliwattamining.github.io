@@ -357,11 +357,70 @@
     position: absolute;
     inset: -10%;
     background:
-      radial-gradient(40% 50% at 30% 30%, rgba(83, 148, 207, 0.18), transparent 60%),
-      radial-gradient(35% 45% at 70% 70%, rgba(30, 60, 110, 0.22), transparent 60%);
+      radial-gradient(40% 50% at 30% 30%, var(--halo-a, rgba(83,148,207,0.18)), transparent 60%),
+      radial-gradient(35% 45% at 70% 70%, var(--halo-b, rgba(30,60,110,0.22)), transparent 60%);
     mix-blend-mode: screen;
     animation: facet-halo 24s ease-in-out infinite alternate;
     pointer-events: none;
+  }
+
+  /* ── Gem colour swatches ── */
+  .hero-swatches {
+    position: absolute;
+    bottom: 32px;
+    right: 40px;
+    z-index: 10;
+    display: flex;
+    gap: 10px;
+    align-items: center;
+  }
+  .hero-swatch {
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    border: 1.5px solid rgba(247,242,234,0.28);
+    cursor: pointer;
+    padding: 0;
+    background: transparent;
+    position: relative;
+    transition: border-color 0.2s, transform 0.2s, box-shadow 0.2s;
+  }
+  .hero-swatch::after {
+    content: "";
+    position: absolute;
+    inset: 2px;
+    border-radius: 50%;
+    background: var(--sw);
+  }
+  /* Tooltip */
+  .hero-swatch::before {
+    content: attr(data-tip);
+    position: absolute;
+    bottom: calc(100% + 9px);
+    left: 50%;
+    transform: translateX(-50%);
+    white-space: nowrap;
+    font-family: var(--mono);
+    font-size: 9px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: rgba(247,242,234,0.85);
+    background: rgba(2,7,13,0.72);
+    padding: 4px 8px;
+    border-radius: 2px;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.15s;
+  }
+  .hero-swatch:hover::before { opacity: 1; }
+  .hero-swatch:hover { border-color: rgba(247,242,234,0.75); transform: scale(1.25); }
+  .hero-swatch.active {
+    border-color: rgba(247,242,234,0.95);
+    box-shadow: 0 0 0 2.5px rgba(247,242,234,0.18);
+    transform: scale(1.15);
+  }
+  @media (max-width: 600px) {
+    .hero-swatches { bottom: 24px; right: 20px; }
   }
   @keyframes facet-halo {
     from { transform: translate3d(-3%, -2%, 0); }
@@ -1998,6 +2057,13 @@
   <div class="hero-veil" aria-hidden="true"></div>
   <div class="rail">№ 01 — Ratnapura, Sri Lanka · 6°40'58.1"N 80°23'57.1"E</div>
 
+  <div class="hero-swatches" role="group" aria-label="Change gem colour">
+    <button class="hero-swatch active" data-gem="blue"   data-tip="Blue Sapphire"  style="--sw:#3a7fc0" aria-label="Blue Sapphire"></button>
+    <button class="hero-swatch"        data-gem="ruby"   data-tip="Ruby"           style="--sw:#c01428" aria-label="Ruby"></button>
+    <button class="hero-swatch"        data-gem="padpa"  data-tip="Padparadscha"   style="--sw:#f09070" aria-label="Padparadscha"></button>
+    <button class="hero-swatch"        data-gem="yellow" data-tip="Yellow Sapphire" style="--sw:#e8c030" aria-label="Yellow Sapphire"></button>
+  </div>
+
   <div class="hero-inner container">
     <div class="hero-content">
       <div class="eyebrow reveal" style="margin-bottom: 28px;">Ceylon Sapphires · Family Mined · Ratnapura</div>
@@ -2885,10 +2951,48 @@
       }
     }
 
-    // Dark sapphire base + brighter sapphire peaks
-    const bases = ['#040c1a', '#06172e', '#081e3a', '#04122a', '#0a2549', '#020a18', '#072039'];
-    const mids  = ['#11365f', '#143e6d', '#0e2e54'];
-    const peaks = ['#2e6aa3', '#3e80bf', '#5394cf', '#1a4373', '#69a5dc'];
+    // Gem colour palettes — bases stay dark (resting state), peaks flash bright on sweep
+    const GEM = {
+      blue: {
+        bases: ['#040c1a','#06172e','#081e3a','#04122a','#0a2549','#020a18','#072039'],
+        mids:  ['#11365f','#143e6d','#0e2e54'],
+        peaks: ['#2e6aa3','#3e80bf','#5394cf','#1a4373','#69a5dc'],
+        anchorSoft: '#14416f', anchorBright: '#4a8fc8',
+        haloA: 'rgba(83,148,207,0.18)', haloB: 'rgba(30,60,110,0.22)',
+      },
+      // Sri Lankan rubies have a slight blue-violet fluorescence under light
+      ruby: {
+        bases: ['#220408','#2a0509','#1e0407','#1c0406','#300608','#180305','#260508'],
+        mids:  ['#820c18','#9a0e1e','#640810'],
+        peaks: ['#cc1020','#e01e30','#f03040','#b00c1c',
+                '#9030b8','#6828c8','#a840d0'], // ← blue-violet fluorescence
+        anchorSoft: '#8a0e1a', anchorBright: '#ee2030',
+        haloA: 'rgba(220,20,35,0.20)', haloB: 'rgba(110,10,70,0.22)',
+      },
+      // Padparadscha: GIA-defined "delicate pinkish-orange" — lotus flower at sunset
+      padpa: {
+        bases: ['#2e1018','#381222','#321018','#281010','#3c1222','#220c12','#301018'],
+        mids:  ['#8a4052','#9c4860','#763040'],
+        peaks: ['#e07870','#f09080','#ff9e88','#d06060','#e88878','#ffa898'],
+        anchorSoft: '#9a4460', anchorBright: '#ffaa94',
+        haloA: 'rgba(240,140,120,0.20)', haloB: 'rgba(160,60,60,0.22)',
+      },
+      // Yellow Sapphire: vivid golden-yellow
+      yellow: {
+        bases: ['#1e1600','#261c00','#201800','#1a1200','#2e2200','#161000','#221a00'],
+        mids:  ['#7a6000','#907200','#5c4800'],
+        peaks: ['#e8c028','#f6d038','#ffe050','#d0a818','#ecca30','#fff068'],
+        anchorSoft: '#806400', anchorBright: '#fad838',
+        haloA: 'rgba(240,190,30,0.20)', haloB: 'rgba(160,110,0,0.22)',
+      },
+    };
+    const g = GEM[window.__gemTheme] || GEM.blue;
+    const bases = g.bases, mids = g.mids, peaks = g.peaks;
+    // Update halo and anchor tints on the host element
+    host.style.setProperty('--halo-a', g.haloA);
+    host.style.setProperty('--halo-b', g.haloB);
+    host.style.setProperty('--anchor-soft', g.anchorSoft);
+    host.style.setProperty('--anchor-bright', g.anchorBright);
 
     const DUR = 8;
     const angle = -0.42; // diagonal sweep direction
@@ -2943,6 +3047,16 @@
   }
 
   buildHeroFacets();
+
+  document.querySelectorAll('.hero-swatch').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('.hero-swatch').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      window.__gemTheme = btn.dataset.gem;
+      buildHeroFacets();
+    });
+  });
+
   let __facetTimer;
   let __facetLastW = window.innerWidth;
   window.addEventListener('resize', () => {
