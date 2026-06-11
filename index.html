@@ -421,7 +421,7 @@
     transform: scale(1.15);
   }
   @media (max-width: 600px) {
-    .hero-swatches { bottom: 24px; right: 20px; }
+    .hero-swatches { display: none; }
   }
   @keyframes facet-halo {
     from { transform: translate3d(-3%, -2%, 0); }
@@ -2061,7 +2061,7 @@
   <div class="hero-swatches" role="group" aria-label="Change gem colour">
     <button class="hero-swatch active" data-gem="blue"   data-tip="Blue Sapphire"  style="--sw:#3a7fc0" aria-label="Blue Sapphire"></button>
     <button class="hero-swatch"        data-gem="ruby"   data-tip="Ruby"           style="--sw:#c01428" aria-label="Ruby"></button>
-    <button class="hero-swatch"        data-gem="padpa"  data-tip="Padparadscha"   style="--sw:#f09070" aria-label="Padparadscha"></button>
+    <button class="hero-swatch"        data-gem="padpa"  data-tip="Padparadscha"   style="--sw:#ff9070" aria-label="Padparadscha"></button>
     <button class="hero-swatch"        data-gem="yellow" data-tip="Yellow Sapphire" style="--sw:#e8c030" aria-label="Yellow Sapphire"></button>
   </div>
 
@@ -2971,11 +2971,11 @@
       },
       // Padparadscha: GIA-defined "delicate pinkish-orange" — lotus flower at sunset
       padpa: {
-        bases: ['#2e1018','#381222','#321018','#281010','#3c1222','#220c12','#301018'],
-        mids:  ['#8a4052','#9c4860','#763040'],
-        peaks: ['#e07870','#f09080','#ff9e88','#d06060','#e88878','#ffa898'],
-        anchorSoft: '#9a4460', anchorBright: '#ffaa94',
-        haloA: 'rgba(240,140,120,0.20)', haloB: 'rgba(160,60,60,0.22)',
+        bases: ['#3c1a10','#481e12','#34160e','#301410','#501e14','#280e08','#401a10'],
+        mids:  ['#c05840','#d86848','#a04430'],
+        peaks: ['#ff9070','#ffaa78','#ffbe88','#ef7858','#ff9c70','#ffd09a','#f08870'],
+        anchorSoft: '#c86040', anchorBright: '#ffb878',
+        haloA: 'rgba(255,160,110,0.26)', haloB: 'rgba(230,110,70,0.22)',
       },
       // Yellow Sapphire: vivid golden-yellow
       yellow: {
@@ -3049,8 +3049,8 @@
   buildHeroFacets();
 
   // Per-gem dark background tints — only --midnight (pure backgrounds, never text)
-  const GEM_MIDNIGHT    = { blue:'#02070D', ruby:'#1c0205', padpa:'#1c0508', yellow:'#181200' };
-  const GEM_SAPPHIRE_BG = { blue:'#071A2D', ruby:'#1c0610', padpa:'#1c0810', yellow:'#1a1400' };
+  const GEM_MIDNIGHT    = { blue:'#02070D', ruby:'#1c0205', padpa:'#120508', yellow:'#181200' };
+  const GEM_SAPPHIRE_BG = { blue:'#071A2D', ruby:'#1c0610', padpa:'#200c12', yellow:'#1a1400' };
 
   function applyGemBg(gem) {
     document.documentElement.style.setProperty('--midnight',    GEM_MIDNIGHT[gem]    || GEM_MIDNIGHT.blue);
