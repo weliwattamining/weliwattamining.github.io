@@ -25,6 +25,7 @@
 <style>
   :root {
     --sapphire: #071A2D;
+    --sapphire-bg: #071A2D;
     --midnight: #02070D;
     --ivory: #F7F2EA;
     --ivory-2: #EFE8DC;
@@ -660,7 +661,7 @@
 
   /* ─────────── The Mine section ─────────── */
   .mine {
-    background: var(--sapphire);
+    background: var(--sapphire-bg);
     color: var(--ivory);
     position: relative;
     overflow: hidden;
@@ -928,7 +929,7 @@
     border: 1px solid var(--line);
   }
   .mine-cards .card {
-    background: var(--sapphire);
+    background: var(--sapphire-bg);
     padding: 40px 32px 44px;
   }
   .mine-cards .card .num {
@@ -1118,7 +1119,7 @@
 
   /* ─────────── Ethical sourcing ─────────── */
   .ethical {
-    background: var(--sapphire);
+    background: var(--sapphire-bg);
     color: var(--ivory);
   }
   .ethical-grid {
@@ -1136,7 +1137,7 @@
     background: var(--line);
   }
   .ethical-blocks .b {
-    background: var(--sapphire);
+    background: var(--sapphire-bg);
     padding: 36px 32px;
     border: 1px solid var(--line);
     margin: -1px 0 0 -1px;
@@ -3048,10 +3049,12 @@
   buildHeroFacets();
 
   // Per-gem dark background tints — only --midnight (pure backgrounds, never text)
-  const GEM_MIDNIGHT = { blue:'#02070D', ruby:'#1c0205', padpa:'#1c0508', yellow:'#181200' };
+  const GEM_MIDNIGHT    = { blue:'#02070D', ruby:'#1c0205', padpa:'#1c0508', yellow:'#181200' };
+  const GEM_SAPPHIRE_BG = { blue:'#071A2D', ruby:'#1c0610', padpa:'#1c0810', yellow:'#1a1400' };
 
   function applyGemBg(gem) {
-    document.documentElement.style.setProperty('--midnight', GEM_MIDNIGHT[gem] || GEM_MIDNIGHT.blue);
+    document.documentElement.style.setProperty('--midnight',    GEM_MIDNIGHT[gem]    || GEM_MIDNIGHT.blue);
+    document.documentElement.style.setProperty('--sapphire-bg', GEM_SAPPHIRE_BG[gem] || GEM_SAPPHIRE_BG.blue);
   }
 
   document.querySelectorAll('.hero-swatch').forEach(btn => {
