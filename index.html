@@ -2042,9 +2042,9 @@
 
   <!-- Sapphire colour swatches — bottom-right corner -->
   <div class="hero-swatches" aria-label="Change background colour" role="group">
-    <button class="hero-swatch" data-theme="violet"  aria-label="Violet sapphire"      style="--swatch-color:#7a4fd0"></button>
-    <button class="hero-swatch" data-theme="teal"    aria-label="Teal parti sapphire"  style="--swatch-color:#1aadad"></button>
     <button class="hero-swatch" data-theme="padpa"   aria-label="Padparadscha sapphire" style="--swatch-color:#d07050"></button>
+    <button class="hero-swatch" data-theme="yellow"  aria-label="Yellow sapphire"       style="--swatch-color:#d4a820"></button>
+    <button class="hero-swatch" data-theme="ruby"    aria-label="Ruby"                  style="--swatch-color:#c01428"></button>
   </div>
 
   <div class="hero-inner container">
@@ -2937,8 +2937,8 @@
     const t = window.__heroTheme || 'blue';
     const THEMES = {
       blue:   { bases: ['#040c1a','#06172e','#081e3a','#04122a','#0a2549','#020a18','#072039'], mids: ['#11365f','#143e6d','#0e2e54'], peaks: ['#2e6aa3','#3e80bf','#5394cf','#1a4373','#69a5dc'], anchorSoft: '#14416f', anchorBright: '#4a8fc8', bgA: 'rgba(30,111,168,0.32)', bgB: 'rgba(30,111,168,0.18)', haloA: 'rgba(83,148,207,0.18)', haloB: 'rgba(30,60,110,0.22)' },
-      violet: { bases: ['#1a1048','#1e1458','#16103e','#180f50','#22186a','#120c3c','#1c1254'], mids: ['#4a30a8','#5a3ec0','#382288'], peaks: ['#9060e8','#a878f8','#be90ff','#7040c8','#9c6af0'], anchorSoft: '#5a38b0', anchorBright: '#b488ff', bgA: 'rgba(80,35,200,0.55)', bgB: 'rgba(55,20,155,0.32)', haloA: 'rgba(130,75,230,0.28)', haloB: 'rgba(55,18,130,0.30)' },
-      teal:   { bases: ['#082828','#0a3030','#0c3636','#061e1e','#0e3a3a','#042020','#0a3232'], mids: ['#186060','#1e7272','#145050'], peaks: ['#28b4b4','#32caca','#20dcdc','#209898','#3cd8d8'], anchorSoft: '#1a6e6e', anchorBright: '#34d8d8', bgA: 'rgba(20,160,160,0.52)', bgB: 'rgba(12,110,110,0.30)', haloA: 'rgba(48,200,200,0.26)', haloB: 'rgba(10,90,90,0.28)' },
+      yellow: { bases: ['#1e1600','#261c00','#201800','#1a1200','#2e2200','#161000','#221a00'], mids: ['#6a5000','#806200','#544000'], peaks: ['#c8a020','#dab830','#eece44','#b08818','#d4ac28'], anchorSoft: '#7a5c00', anchorBright: '#f0c830', bgA: 'rgba(180,140,0,0.52)', bgB: 'rgba(130,100,0,0.30)', haloA: 'rgba(220,170,20,0.26)', haloB: 'rgba(140,100,0,0.28)' },
+      ruby:   { bases: ['#200406','#280508','#1e0406','#1a0405','#300608','#160304','#240507'], mids: ['#780a14','#8e0c18','#600810'], peaks: ['#c81020','#de1e2e','#f03040','#a80c1c','#d41828'], anchorSoft: '#8a0e1a', anchorBright: '#f02838', bgA: 'rgba(180,10,25,0.52)', bgB: 'rgba(130,6,18,0.30)', haloA: 'rgba(220,20,35,0.26)', haloB: 'rgba(140,5,15,0.28)' },
       padpa:  { bases: ['#2c1208','#34160a','#280e08','#241008','#3a1a08','#200c08','#2e1208'], mids: ['#883828','#9a4030','#701e18'], peaks: ['#d86840','#ee7850','#ff8860','#c05038','#e06048'], anchorSoft: '#9a4230', anchorBright: '#f07858', bgA: 'rgba(200,75,45,0.52)', bgB: 'rgba(155,50,25,0.30)', haloA: 'rgba(220,100,55,0.26)', haloB: 'rgba(140,40,18,0.28)' },
     };
     const theme = THEMES[t] || THEMES.blue;
