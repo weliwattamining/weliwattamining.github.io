@@ -520,27 +520,6 @@
     background: var(--swatch-color);
     transition: opacity 0.2s;
   }
-  /* Hover tooltip */
-  .hero-swatch::before {
-    content: attr(data-tooltip);
-    position: absolute;
-    bottom: calc(100% + 10px);
-    left: 50%;
-    transform: translateX(-50%);
-    white-space: nowrap;
-    font-family: var(--mono);
-    font-size: 9px;
-    letter-spacing: 0.18em;
-    text-transform: uppercase;
-    color: rgba(247,242,234,0.85);
-    background: rgba(2,7,13,0.75);
-    padding: 4px 8px;
-    border-radius: 2px;
-    opacity: 0;
-    pointer-events: none;
-    transition: opacity 0.18s;
-  }
-  .hero-swatch:hover::before { opacity: 1; }
   .hero-swatch:hover {
     border-color: rgba(247,242,234,0.7);
     transform: scale(1.2);
@@ -552,11 +531,6 @@
   }
   @media (max-width: 600px) {
     .hero-swatches { bottom: 22px; right: 20px; }
-  }
-  /* Smooth site-wide colour crossfade when theme changes */
-  :root { transition: --gold 0s, --gold-soft 0s, --clay 0s; }
-  .gem-transition * {
-    transition: color 0.5s ease, background-color 0.5s ease, border-color 0.5s ease, fill 0.5s ease !important;
   }
 
   /* Decorative side rail */
@@ -2067,11 +2041,10 @@
   <div class="rail">№ 01 — Ratnapura, Sri Lanka · 6°40'58.1"N 80°23'57.1"E</div>
 
   <!-- Sapphire colour swatches — bottom-right corner -->
-  <div class="hero-swatches" aria-label="Change gem theme" role="group">
-    <button class="hero-swatch active" data-theme="blue"   data-tooltip="Blue Sapphire"   aria-label="Blue sapphire (default)" style="--swatch-color:#3a80c0"></button>
-    <button class="hero-swatch"        data-theme="padpa"  data-tooltip="Padparadscha"     aria-label="Padparadscha sapphire"   style="--swatch-color:#f09070"></button>
-    <button class="hero-swatch"        data-theme="yellow" data-tooltip="Yellow Sapphire"  aria-label="Yellow sapphire"         style="--swatch-color:#e8c030"></button>
-    <button class="hero-swatch"        data-theme="ruby"   data-tooltip="Ruby"             aria-label="Ruby"                    style="--swatch-color:#c01428"></button>
+  <div class="hero-swatches" aria-label="Change background colour" role="group">
+    <button class="hero-swatch" data-theme="padpa"   aria-label="Padparadscha sapphire" style="--swatch-color:#d07050"></button>
+    <button class="hero-swatch" data-theme="yellow"  aria-label="Yellow sapphire"       style="--swatch-color:#d4a820"></button>
+    <button class="hero-swatch" data-theme="ruby"    aria-label="Ruby"                  style="--swatch-color:#c01428"></button>
   </div>
 
   <div class="hero-inner container">
@@ -2960,53 +2933,13 @@
       }
     }
 
-    // ── Gem colour themes ─────────────────────────────────────────────────
-    // Each theme has facet colours (bases/mids/peaks/anchors/halo) PLUS
-    // site-wide CSS variable overrides (gold, goldSoft, clay) that cascade
-    // to every button, eyebrow, highlight and divider on the page.
+    // Dark sapphire base + brighter sapphire peaks
     const t = window.__heroTheme || 'blue';
     const THEMES = {
-      // ── Ceylon Blue Sapphire (default) ─────────────────────────────────
-      blue: {
-        bases:  ['#040c1a','#06172e','#081e3a','#04122a','#0a2549','#020a18','#072039'],
-        mids:   ['#11365f','#143e6d','#0e2e54'],
-        peaks:  ['#2e6aa3','#3e80bf','#5394cf','#1a4373','#69a5dc'],
-        anchorSoft: '#14416f', anchorBright: '#4a8fc8',
-        haloA: 'rgba(83,148,207,0.18)', haloB: 'rgba(30,60,110,0.22)',
-        gold: '#BFA46F', goldSoft: '#C9B383', clay: '#6B4A35',
-      },
-      // ── Padparadscha — lotus-pink·orange (Sri Lanka's rarest sapphire) ─
-      // GIA defines it as "a delicate pinkish-orange", like a sunset lotus.
-      padpa: {
-        bases:  ['#2e1018','#381220','#321018','#28100e','#3c1220','#220c12','#301018'],
-        mids:   ['#8a4052','#9c4860','#763040'],
-        peaks:  ['#e07870','#f09080','#ff9e88','#d06060','#e88878','#f4a090'],
-        anchorSoft: '#9a4460', anchorBright: '#ffa090',
-        haloA: 'rgba(240,140,120,0.22)', haloB: 'rgba(160,60,60,0.24)',
-        gold: '#C87870', goldSoft: '#D48880', clay: '#7A4038',
-      },
-      // ── Yellow Sapphire — vivid golden yellow ──────────────────────────
-      yellow: {
-        bases:  ['#1e1600','#261c00','#201800','#1a1200','#2e2200','#161000','#221a00'],
-        mids:   ['#7a6000','#907200','#5c4800'],
-        peaks:  ['#e8c028','#f6d038','#ffe050','#d0a818','#ecca30','#f8dc44'],
-        anchorSoft: '#806400', anchorBright: '#fad83a',
-        haloA: 'rgba(240,190,30,0.22)', haloB: 'rgba(160,110,0,0.24)',
-        gold: '#C8A010', goldSoft: '#D8B420', clay: '#705800',
-      },
-      // ── Ruby — pigeon-blood red with Sri Lankan blue fluorescence ──────
-      // Sri Lankan rubies are prized for a slight violet-blue shift when
-      // light catches their crystal structure. The peaks include occasional
-      // blue-purple flashes to replicate that optical phenomenon.
-      ruby: {
-        bases:  ['#220408','#2a0508','#1e0406','#1c0405','#320608','#180305','#260508'],
-        mids:   ['#820c18','#9a0e1e','#640810'],
-        peaks:  ['#cc1020','#e01e30','#f03040','#b00c1c','#d81828',
-                 '#8030a8','#6028c0','#9840c0'], // ← blue-violet fluorescence flashes
-        anchorSoft: '#8a0e1a', anchorBright: '#ee2030',
-        haloA: 'rgba(220,20,35,0.22)', haloB: 'rgba(120,10,80,0.24)',
-        gold: '#B0141E', goldSoft: '#C42030', clay: '#6A0C18',
-      },
+      blue:   { bases: ['#040c1a','#06172e','#081e3a','#04122a','#0a2549','#020a18','#072039'], mids: ['#11365f','#143e6d','#0e2e54'], peaks: ['#2e6aa3','#3e80bf','#5394cf','#1a4373','#69a5dc'], anchorSoft: '#14416f', anchorBright: '#4a8fc8', bgA: 'rgba(30,111,168,0.32)', bgB: 'rgba(30,111,168,0.18)', haloA: 'rgba(83,148,207,0.18)', haloB: 'rgba(30,60,110,0.22)' },
+      yellow: { bases: ['#1e1600','#261c00','#201800','#1a1200','#2e2200','#161000','#221a00'], mids: ['#6a5000','#806200','#544000'], peaks: ['#c8a020','#dab830','#eece44','#b08818','#d4ac28'], anchorSoft: '#7a5c00', anchorBright: '#f0c830', bgA: 'rgba(180,140,0,0.52)', bgB: 'rgba(130,100,0,0.30)', haloA: 'rgba(220,170,20,0.26)', haloB: 'rgba(140,100,0,0.28)' },
+      ruby:   { bases: ['#200406','#280508','#1e0406','#1a0405','#300608','#160304','#240507'], mids: ['#780a14','#8e0c18','#600810'], peaks: ['#c81020','#de1e2e','#f03040','#a80c1c','#d41828'], anchorSoft: '#8a0e1a', anchorBright: '#f02838', bgA: 'rgba(180,10,25,0.52)', bgB: 'rgba(130,6,18,0.30)', haloA: 'rgba(220,20,35,0.26)', haloB: 'rgba(140,5,15,0.28)' },
+      padpa:  { bases: ['#2c1208','#34160a','#280e08','#241008','#3a1a08','#200c08','#2e1208'], mids: ['#883828','#9a4030','#701e18'], peaks: ['#d86840','#ee7850','#ff8860','#c05038','#e06048'], anchorSoft: '#9a4230', anchorBright: '#f07858', bgA: 'rgba(200,75,45,0.52)', bgB: 'rgba(155,50,25,0.30)', haloA: 'rgba(220,100,55,0.26)', haloB: 'rgba(140,40,18,0.28)' },
     };
     const theme = THEMES[t] || THEMES.blue;
     const bases = theme.bases, mids = theme.mids, peaks = theme.peaks;
@@ -3074,31 +3007,18 @@
 
   buildHeroFacets();
 
-  // Apply CSS variable overrides to :root so the whole site adapts
-  function applyGemSiteTheme(t) {
-    const SITE = {
-      blue:   { '--gold': '#BFA46F', '--gold-soft': '#C9B383', '--clay': '#6B4A35' },
-      padpa:  { '--gold': '#C87870', '--gold-soft': '#D48880', '--clay': '#7A4038' },
-      yellow: { '--gold': '#C8A010', '--gold-soft': '#D8B420', '--clay': '#705800' },
-      ruby:   { '--gold': '#B0141E', '--gold-soft': '#C42030', '--clay': '#6A0C18' },
-    };
-    const vars = SITE[t] || SITE.blue;
-    const root = document.documentElement;
-    // Brief transition class for smooth crossfade of coloured elements
-    root.classList.add('gem-transition');
-    Object.entries(vars).forEach(([k, v]) => root.style.setProperty(k, v));
-    clearTimeout(root._gemTimer);
-    root._gemTimer = setTimeout(() => root.classList.remove('gem-transition'), 600);
-  }
-
-  // Swatch gem theme picker
+  // Swatch colour pickers
   document.querySelectorAll('.hero-swatch').forEach(btn => {
     btn.addEventListener('click', () => {
-      const t = btn.dataset.theme;
+      const theme = btn.dataset.theme;
+      const isActive = btn.classList.contains('active');
       document.querySelectorAll('.hero-swatch').forEach(b => b.classList.remove('active'));
-      btn.classList.add('active');
-      window.__heroTheme = t;
-      applyGemSiteTheme(t);
+      if (isActive) {
+        window.__heroTheme = 'blue';
+      } else {
+        window.__heroTheme = theme;
+        btn.classList.add('active');
+      }
       buildHeroFacets();
     });
   });
