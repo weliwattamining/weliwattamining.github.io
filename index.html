@@ -3047,11 +3047,19 @@
 
   buildHeroFacets();
 
+  // Per-gem dark background tints — only --midnight (pure backgrounds, never text)
+  const GEM_MIDNIGHT = { blue:'#02070D', ruby:'#1c0205', padpa:'#1c0508', yellow:'#181200' };
+
+  function applyGemBg(gem) {
+    document.documentElement.style.setProperty('--midnight', GEM_MIDNIGHT[gem] || GEM_MIDNIGHT.blue);
+  }
+
   document.querySelectorAll('.hero-swatch').forEach(btn => {
     btn.addEventListener('click', () => {
       document.querySelectorAll('.hero-swatch').forEach(b => b.classList.remove('active'));
       btn.classList.add('active');
       window.__gemTheme = btn.dataset.gem;
+      applyGemBg(btn.dataset.gem);
       buildHeroFacets();
     });
   });
