@@ -10,9 +10,9 @@
 <meta property="og:url" content="https://weliwatta.com/" />
 <meta property="og:title" content="Weliwatta Mining Co. — Ceylon Sapphires from Ratnapura" />
 <meta property="og:description" content="Family-owned mine-to-market Ceylon sapphires from Sri Lanka's Ratnapura region. Direct source for collectors, jewelers, dealers, and high jewelry houses." />
-<meta property="og:image" content="https://weliwatta.com/assets/The_Blue_Beast.png" />
+<meta property="og:image" content="https://weliwatta.com/assets/The_Blue_Beast.webp" />
 <meta name="twitter:card" content="summary_large_image" />
-<meta name="twitter:image" content="https://weliwatta.com/assets/The_Blue_Beast.png" />
+<meta name="twitter:image" content="https://weliwatta.com/assets/The_Blue_Beast.webp" />
 <!-- Favicon -->
 <link rel="icon" type="image/png" href="assets/logo-mark-white.png" media="(prefers-color-scheme: dark)" />
 <link rel="icon" type="image/png" href="assets/logo-mark-dark.png" media="(prefers-color-scheme: light)" />
@@ -342,8 +342,8 @@
     stroke: rgba(247, 242, 234, 0.08);
     stroke-width: 0.8;
   }
-  .hero-facets polygon.anchor-soft { fill: var(--anchor-soft, #14416f) !important; }
-  .hero-facets polygon.anchor-bright { fill: var(--anchor-bright, #4a8fc8) !important; }
+  .hero-facets polygon.anchor-soft { fill: var(--anchor-soft, #14416f) !important; transition: fill 3s ease; }
+  .hero-facets polygon.anchor-bright { fill: var(--anchor-bright, #4a8fc8) !important; transition: fill 3s ease; }
   /* Two-pulse keyframe gives a soft "glide" — ramp up, hold briefly, ramp back */
   @keyframes facet-sweep {
     0%   { fill: var(--base); }
@@ -2615,7 +2615,12 @@
       });
       links.forEach(a => a.classList.toggle('active', a === best));
     }
-    document.addEventListener('scroll', update, { passive: true });
+    let _navTick = false;
+    document.addEventListener('scroll', () => {
+      if (_navTick) return;
+      _navTick = true;
+      requestAnimationFrame(() => { update(); _navTick = false; });
+    }, { passive: true });
     window.addEventListener('resize', update);
     update();
   })();
@@ -2919,6 +2924,7 @@
   function buildHeroFacets() {
     const host = document.querySelector('.hero-facets');
     if (!host) return;
+    if (typeof window.__resetGemWave === 'function') window.__resetGemWave();
     const rect = host.getBoundingClientRect();
     const w = Math.max(800, Math.round(rect.width));
     const h = Math.max(600, Math.round(rect.height));
@@ -3054,20 +3060,118 @@
   const GEM_MIDNIGHT    = { blue:'#02070D', ruby:'#1c0205', padpa:'#1c0508', yellow:'#181200' };
   const GEM_SAPPHIRE_BG = { blue:'#071A2D', ruby:'#1c0610', padpa:'#1c0810', yellow:'#1a1400' };
 
-  function applyGemBg(gem) {
-    document.documentElement.style.setProperty('--midnight',    GEM_MIDNIGHT[gem]    || GEM_MIDNIGHT.blue);
-    document.documentElement.style.setProperty('--sapphire-bg', GEM_SAPPHIRE_BG[gem] || GEM_SAPPHIRE_BG.blue);
-  }
+  // ── Colour wave on gem swatch click ─────────────────────────────────────
+  // Click → new wave starts from top-right, sweeps to bottom-left over
+  // WAVE_DUR ms. Each polygon changes only when the wave front reaches it.
+  // A new click cancels any pending wave and starts a fresh one immediately.
+  (function () {
+    const WAVE_DUR = 8000; // ms — matches the flash animation sweep duration
+    const SWEEP_MAX_D = 8; // DUR constant from buildHeroFacets
 
-  document.querySelectorAll('.hero-swatch').forEach(btn => {
-    btn.addEventListener('click', () => {
-      document.querySelectorAll('.hero-swatch').forEach(b => b.classList.remove('active'));
-      btn.classList.add('active');
-      window.__gemTheme = btn.dataset.gem;
-      applyGemBg(btn.dataset.gem);
-      buildHeroFacets();
+    const WAVE_GEM = {
+      blue:   {
+        bases: ['#040c1a','#06172e','#081e3a','#04122a','#0a2549','#020a18','#072039'],
+        mids:  ['#11365f','#143e6d','#0e2e54'],
+        peaks: ['#2e6aa3','#3e80bf','#5394cf','#1a4373','#69a5dc'],
+        anchorSoft:'#14416f', anchorBright:'#4a8fc8',
+        haloA:'rgba(83,148,207,0.18)', haloB:'rgba(30,60,110,0.22)',
+      },
+      ruby:   {
+        bases: ['#220408','#2a0509','#1e0407','#1c0406','#300608','#180305','#260508'],
+        mids:  ['#820c18','#9a0e1e','#640810'],
+        peaks: ['#cc1020','#e01e30','#f03040','#b00c1c','#d81828','#ee2438'],
+        anchorSoft:'#8a0e1a', anchorBright:'#ee2030',
+        haloA:'rgba(220,20,35,0.20)', haloB:'rgba(110,10,70,0.22)',
+      },
+      padpa:  {
+        bases: ['#2e1008','#301018','#381410','#2a0c14','#3c1808','#280810','#321410'],
+        mids:  ['#c06828','#b04868','#d07840','#a83858','#c86030','#b85068','#d08848'],
+        peaks: ['#ff9040','#ff8cb0','#ffc090','#ffacc8','#ffa850','#ff9cb8','#ffd0a0','#ffb8d0','#ffb870'],
+        anchorSoft:'#c06040', anchorBright:'#ffb8d0',
+        haloA:'rgba(255,140,60,0.20)', haloB:'rgba(255,120,170,0.20)',
+      },
+      yellow: {
+        bases: ['#1e1600','#261c00','#201800','#1a1200','#2e2200','#161000','#221a00'],
+        mids:  ['#7a6000','#907200','#5c4800'],
+        peaks: ['#e8c028','#f6d038','#ffe050','#d0a818','#ecca30','#fff068'],
+        anchorSoft:'#806400', anchorBright:'#fad838',
+        haloA:'rgba(240,190,30,0.20)', haloB:'rgba(160,110,0,0.22)',
+      },
+    };
+
+    let waveActive = false;
+    let nextGem    = null;
+
+    // Called by buildHeroFacets on resize so waveActive never gets stuck.
+    window.__resetGemWave = function() { waveActive = false; nextGem = null; };
+
+    function runWave(gem) {
+      window.__gemTheme = gem;
+      waveActive = true;
+      nextGem    = null;
+
+      const g    = WAVE_GEM[gem];
+      const host = document.querySelector('.hero-facets');
+      if (!host || !g) { waveActive = false; return; }
+
+      let seed = 77777;
+      const rnd = () => { seed = (seed * 16807) % 2147483647; return seed / 2147483647; };
+
+      let maxFireAt = 0;
+
+      // Each polygon's --d encodes its sweep position:
+      //   proj = abs(d_sec) / SWEEP_MAX_D → [0 = bottom-left, 1 = top-right]
+      // Fire top-right first: fireAt = (1 - proj) * WAVE_DUR
+      host.querySelectorAll('polygon:not(.anchor)').forEach(p => {
+        const dSec   = parseFloat(p.style.getPropertyValue('--d') || '0');
+        const proj   = Math.min(1, Math.abs(dSec) / SWEEP_MAX_D);
+        const fireAt = Math.round((1 - proj) * WAVE_DUR);
+
+        if (fireAt > maxFireAt) maxFireAt = fireAt;
+
+        const base = g.bases[Math.floor(rnd() * g.bases.length)];
+        const mid  = g.mids [Math.floor(rnd() * g.mids.length)];
+        const peak = g.peaks[Math.floor(rnd() * g.peaks.length)];
+
+        setTimeout(() => {
+          p.style.setProperty('--base', base);
+          p.style.setProperty('--mid',  mid);
+          p.style.setProperty('--peak', peak);
+        }, fireAt);
+      });
+
+      // Anchors change at the midpoint of the sweep.
+      setTimeout(() => {
+        host.style.setProperty('--anchor-soft',   g.anchorSoft);
+        host.style.setProperty('--anchor-bright', g.anchorBright);
+        host.style.setProperty('--halo-a',        g.haloA);
+        host.style.setProperty('--halo-b',        g.haloB);
+      }, Math.round(maxFireAt * 0.5));
+
+      // After the wave fully finishes: update section backgrounds, then
+      // start the next queued wave if the user clicked again mid-sweep.
+      setTimeout(() => {
+        document.documentElement.style.setProperty('--midnight',    GEM_MIDNIGHT[gem]    || GEM_MIDNIGHT.blue);
+        document.documentElement.style.setProperty('--sapphire-bg', GEM_SAPPHIRE_BG[gem] || GEM_SAPPHIRE_BG.blue);
+        waveActive = false;
+        if (nextGem) runWave(nextGem);
+      }, maxFireAt + 300);
+    }
+
+    document.querySelectorAll('.hero-swatch').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('.hero-swatch').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        window.__gemTheme = btn.dataset.gem;
+        if (waveActive) {
+          // Let current wave finish — remember only the latest click.
+          nextGem = btn.dataset.gem;
+        } else {
+          runWave(btn.dataset.gem);
+        }
+      });
     });
-  });
+  }());
 
   let __facetTimer;
   let __facetLastW = window.innerWidth;
