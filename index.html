@@ -330,29 +330,18 @@
     height: 100%;
     display: block;
   }
+  /* Sheen lighting model — fills are driven per-frame from JS, no CSS animation */
   .hero-facets polygon {
-    fill: var(--base);
     stroke: rgba(247, 242, 234, 0.02);
     stroke-width: 0.6;
-    animation: facet-sweep var(--facet-dur, 10s) cubic-bezier(.45,.05,.55,.95) var(--d, 0s) infinite;
   }
   /* Static anchor facets — a couple of permanent brighter planes so the eye has a fixed point. */
   .hero-facets polygon.anchor {
-    animation: none;
     stroke: rgba(247, 242, 234, 0.08);
     stroke-width: 0.8;
   }
   .hero-facets polygon.anchor-soft { fill: var(--anchor-soft, #14416f) !important; transition: fill 3s ease; }
   .hero-facets polygon.anchor-bright { fill: var(--anchor-bright, #4a8fc8) !important; transition: fill 3s ease; }
-  /* Two-pulse keyframe gives a soft "glide" — ramp up, hold briefly, ramp back */
-  @keyframes facet-sweep {
-    0%   { fill: var(--base); }
-    7%   { fill: var(--mid, var(--peak)); }
-    11%  { fill: var(--peak); }
-    15%  { fill: var(--mid, var(--peak)); }
-    22%  { fill: var(--base); }
-    100% { fill: var(--base); }
-  }
   /* Soft secondary halo — a slow drifting radial that adds organic depth */
   .hero-facets::after {
     content: "";
@@ -420,6 +409,22 @@
     border-color: rgba(247,242,234,0.95);
     box-shadow: 0 0 0 2.5px rgba(247,242,234,0.18);
     transform: scale(1.15);
+  }
+  /* Medium screens: corner placement collides with full-width CTAs.
+     Centre the swatches beneath the content like a deliberate control strip. */
+  @media (max-width: 900px) {
+    .hero .hero-content { padding-bottom: 120px; }
+    .hero-swatches {
+      right: auto;
+      left: 50%;
+      transform: translateX(-50%);
+      bottom: 26px;
+      gap: 22px;
+    }
+    .hero-swatch { width: 18px; height: 18px; }
+    .hero-swatch::before { display: none; }
+    .hero-swatch:hover { transform: none; }
+    .hero-swatch.active { transform: scale(1.15); }
   }
   @media (max-width: 600px) {
     .hero-swatches { display: none; }
@@ -658,6 +663,11 @@
   @media (max-width: 900px) {
     .story-grid { grid-template-columns: 1fr; gap: 60px; }
     .story-copy { order: 2; }
+  }
+
+  /* Gem theming: section backgrounds ease to the picked gem's tint */
+  body, .mine, .mine-cards .card, .ethical, .ethical-blocks .b, .finds {
+    transition: background-color 1.2s ease;
   }
 
   /* ─────────── The Mine section ─────────── */
@@ -2920,7 +2930,40 @@
 
   })();
 
-  // ───── Faceted sapphire hero ─────
+  // ───── Faceted sapphire hero — sheen lighting model ─────
+  // Each facet has a fixed pseudo-normal angle; a slowly rotating virtual
+  // light plus a wide drifting band light the surface per-frame. Brightness
+  // moves through a per-gem luminance ramp — no per-polygon CSS animation.
+  const FACET = { tris: [], host: null };
+
+  // Luminance ramps, dark → bright, one hue family per ramp.
+  // Padparadscha gets two ramps (orange + pink) assigned per-facet.
+  const GEM_RAMPS = {
+    blue:   [['#02070f','#04122a','#081e3a','#11365f','#1a4373','#2e6aa3','#5394cf','#7db4e1']],
+    ruby:   [['#190304','#220408','#400810','#640810','#820c18','#b00c1c','#d81828','#f03040']],
+    // Padparadscha spans the market's contested range: orangey-pink ↔ pinkish-
+    // orange ↔ salmon. Three ramps so different facets sit at different points
+    // of that range. Darks stay rosy-warm (never brown), peaks pastel.
+    padpa:  [
+      ['#200a08','#3c1410','#702c22','#aa4836','#e06a4c','#ff8a64','#ffa882','#ffc4a4'],
+      ['#1e0810','#380e1c','#642038','#a03a54','#d05874','#f87c98','#ffa0b8','#ffc2d0'],
+      ['#200a0a','#401616','#783028','#b85044','#ec7460','#ff9480','#ffb09a','#ffccb8'],
+    ],
+    yellow: [['#100c00','#1e1600','#3a2c00','#5c4800','#7a6000','#907200','#c8a818','#ecca30']],
+  };
+  const GEM_DECOR = {
+    blue:   { anchorSoft:'#14416f', anchorBright:'#4a8fc8', haloA:'rgba(83,148,207,0.18)',   haloB:'rgba(30,60,110,0.22)'   },
+    ruby:   { anchorSoft:'#8a0e1a', anchorBright:'#ee2030', haloA:'rgba(220,20,35,0.20)',    haloB:'rgba(110,10,70,0.22)'   },
+    padpa:  { anchorSoft:'#c06040', anchorBright:'#ffb8d0', haloA:'rgba(255,140,60,0.20)',   haloB:'rgba(255,120,170,0.20)' },
+    yellow: { anchorSoft:'#806400', anchorBright:'#fad838', haloA:'rgba(240,190,30,0.20)',   haloB:'rgba(160,110,0,0.22)'   },
+  };
+  const GEM_RAMPS_RGB = {};
+  Object.keys(GEM_RAMPS).forEach(k => {
+    GEM_RAMPS_RGB[k] = GEM_RAMPS[k].map(ramp =>
+      ramp.map(h => [parseInt(h.slice(1,3),16), parseInt(h.slice(3,5),16), parseInt(h.slice(5,7),16)])
+    );
+  });
+
   function buildHeroFacets() {
     const host = document.querySelector('.hero-facets');
     if (!host) return;
@@ -2959,48 +3002,13 @@
       }
     }
 
-    // Gem colour palettes — bases stay dark (resting state), peaks flash bright on sweep
-    const GEM = {
-      blue: {
-        bases: ['#040c1a','#06172e','#081e3a','#04122a','#0a2549','#020a18','#072039'],
-        mids:  ['#11365f','#143e6d','#0e2e54'],
-        peaks: ['#2e6aa3','#3e80bf','#5394cf','#1a4373','#69a5dc'],
-        anchorSoft: '#14416f', anchorBright: '#4a8fc8',
-        haloA: 'rgba(83,148,207,0.18)', haloB: 'rgba(30,60,110,0.22)',
-      },
-      // Sri Lankan rubies have a slight blue-violet fluorescence under light
-      ruby: {
-        bases: ['#220408','#2a0509','#1e0407','#1c0406','#300608','#180305','#260508'],
-        mids:  ['#820c18','#9a0e1e','#640810'],
-        peaks: ['#cc1020','#e01e30','#f03040','#b00c1c','#d81828','#ee2438'],
-        anchorSoft: '#8a0e1a', anchorBright: '#ee2030',
-        haloA: 'rgba(220,20,35,0.20)', haloB: 'rgba(110,10,70,0.22)',
-      },
-      // Padparadscha: the COMBINATION of orange AND pink — not one colour
-      // Some faces orange, some pink, some salmon between — like the stone itself
-      padpa: {
-        bases: ['#2e1008','#301018','#381410','#2a0c14','#3c1808','#280810','#321410'],
-        mids:  ['#c06828','#b04868','#d07840','#a83858','#c86030','#b85068','#d08848'],
-        peaks: ['#ff9040','#ff8cb0','#ffc090','#ffacc8','#ffa850','#ff9cb8','#ffd0a0','#ffb8d0','#ffb870'],
-        anchorSoft: '#c06040', anchorBright: '#ffb8d0',
-        haloA: 'rgba(255,140,60,0.20)', haloB: 'rgba(255,120,170,0.20)',
-      },
-      // Yellow Sapphire: vivid golden-yellow
-      yellow: {
-        bases: ['#1e1600','#261c00','#201800','#1a1200','#2e2200','#161000','#221a00'],
-        mids:  ['#7a6000','#907200','#5c4800'],
-        peaks: ['#e8c028','#f6d038','#ffe050','#d0a818','#ecca30','#fff068'],
-        anchorSoft: '#806400', anchorBright: '#fad838',
-        haloA: 'rgba(240,190,30,0.20)', haloB: 'rgba(160,110,0,0.22)',
-      },
-    };
-    const g = GEM[window.__gemTheme] || GEM.blue;
-    const bases = g.bases, mids = g.mids, peaks = g.peaks;
-    // Update halo and anchor tints on the host element
-    host.style.setProperty('--halo-a', g.haloA);
-    host.style.setProperty('--halo-b', g.haloB);
-    host.style.setProperty('--anchor-soft', g.anchorSoft);
-    host.style.setProperty('--anchor-bright', g.anchorBright);
+    const theme = window.__gemTheme || 'blue';
+    const decor = GEM_DECOR[theme] || GEM_DECOR.blue;
+    const ramps = GEM_RAMPS_RGB[theme] || GEM_RAMPS_RGB.blue;
+    host.style.setProperty('--halo-a', decor.haloA);
+    host.style.setProperty('--halo-b', decor.haloB);
+    host.style.setProperty('--anchor-soft', decor.anchorSoft);
+    host.style.setProperty('--anchor-bright', decor.anchorBright);
 
     const DUR = 8;
     const angle = -0.42; // diagonal sweep direction
@@ -3031,27 +3039,33 @@
     const anchorMap = new Map();
     anchorIdx.forEach((i, k) => anchorMap.set(i, anchors[k].type));
 
+    const meta = [];
     const parts = [`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${w} ${h}" preserveAspectRatio="xMidYMid slice">`];
     tris.forEach((tri, i) => {
       const cx = (tri[0].x + tri[1].x + tri[2].x) / 3;
       const cy = (tri[0].y + tri[1].y + tri[2].y) / 3;
       const proj = (cx * ux + cy * uy - minP) / span;
-      // small organic jitter on the delay so the wave isn't perfectly straight
-      const jitter = (rnd() - 0.5) * 0.08;
-      const delay = -((proj + jitter) * DUR);
-      const base = bases[Math.floor(rnd() * bases.length)];
-      const mid  = mids[Math.floor(rnd() * mids.length)];
-      const peak = peaks[Math.floor(rnd() * peaks.length)];
       const pts = tri.map(p => `${p.x.toFixed(1)},${p.y.toFixed(1)}`).join(' ');
       const anchorType = anchorMap.get(i);
       if (anchorType) {
         parts.push(`<polygon class="anchor anchor-${anchorType}" points="${pts}"/>`);
       } else {
-        parts.push(`<polygon points="${pts}" style="--base:${base};--mid:${mid};--peak:${peak};--d:${delay.toFixed(2)}s"/>`);
+        // fixed pseudo-normal: faces roughly outward from centre, per-facet variation
+        const normal = Math.atan2(cy - h / 2, cx - w / 2) + (rnd() - 0.5) * 1.8;
+        meta.push({
+          normal,
+          baseL: 0.08 + rnd() * 0.10,
+          proj,
+          ramp: ramps[Math.floor(rnd() * ramps.length)],
+        });
+        parts.push(`<polygon data-f="${meta.length - 1}" points="${pts}"/>`);
       }
     });
     parts.push('</svg>');
     host.innerHTML = parts.join('');
+    host.querySelectorAll('polygon[data-f]').forEach(p => { meta[Number(p.dataset.f)].el = p; });
+    FACET.tris = meta;
+    FACET.host = host;
   }
 
   buildHeroFacets();
@@ -3060,45 +3074,90 @@
   const GEM_MIDNIGHT    = { blue:'#02070D', ruby:'#1c0205', padpa:'#1c0508', yellow:'#181200' };
   const GEM_SAPPHIRE_BG = { blue:'#071A2D', ruby:'#1c0610', padpa:'#1c0810', yellow:'#1a1400' };
 
-  // ── Colour wave on gem swatch click ─────────────────────────────────────
-  // Click → new wave starts from top-right, sweeps to bottom-left over
-  // WAVE_DUR ms. Each polygon changes only when the wave front reaches it.
-  // A new click cancels any pending wave and starts a fresh one immediately.
+  // ── Sheen engine + colour wave ───────────────────────────────────────────
+  // One rAF loop lights all facets: a slowly rotating virtual light (each
+  // facet brightens by how much its pseudo-normal faces it) plus a wide soft
+  // band drifting top-right → bottom-left. Swatch clicks sweep a colour wave
+  // that swaps each facet's luminance ramp as the front passes.
   (function () {
-    const WAVE_DUR = 8000; // ms — matches the flash animation sweep duration
-    const SWEEP_MAX_D = 8; // DUR constant from buildHeroFacets
+    const AMP         = 0.72;  // sheen strength
+    const LIGHT_SPEED = 0.05;  // rad/s — slow ambient drift of facet lighting
+    const BAND_SPEED  = 0.14;  // band drift, fraction of diagonal per second (~10s cycle)
+    const BAND_WIDTH  = 0.20;  // gaussian width of the band
+    const WAVE_DUR    = 8000;  // ms — colour wave sweep duration
 
-    const WAVE_GEM = {
-      blue:   {
-        bases: ['#040c1a','#06172e','#081e3a','#04122a','#0a2549','#020a18','#072039'],
-        mids:  ['#11365f','#143e6d','#0e2e54'],
-        peaks: ['#2e6aa3','#3e80bf','#5394cf','#1a4373','#69a5dc'],
-        anchorSoft:'#14416f', anchorBright:'#4a8fc8',
-        haloA:'rgba(83,148,207,0.18)', haloB:'rgba(30,60,110,0.22)',
-      },
-      ruby:   {
-        bases: ['#220408','#2a0509','#1e0407','#1c0406','#300608','#180305','#260508'],
-        mids:  ['#820c18','#9a0e1e','#640810'],
-        peaks: ['#cc1020','#e01e30','#f03040','#b00c1c','#d81828','#ee2438'],
-        anchorSoft:'#8a0e1a', anchorBright:'#ee2030',
-        haloA:'rgba(220,20,35,0.20)', haloB:'rgba(110,10,70,0.22)',
-      },
-      padpa:  {
-        bases: ['#2e1008','#301018','#381410','#2a0c14','#3c1808','#280810','#321410'],
-        mids:  ['#c06828','#b04868','#d07840','#a83858','#c86030','#b85068','#d08848'],
-        peaks: ['#ff9040','#ff8cb0','#ffc090','#ffacc8','#ffa850','#ff9cb8','#ffd0a0','#ffb8d0','#ffb870'],
-        anchorSoft:'#c06040', anchorBright:'#ffb8d0',
-        haloA:'rgba(255,140,60,0.20)', haloB:'rgba(255,120,170,0.20)',
-      },
-      yellow: {
-        bases: ['#1e1600','#261c00','#201800','#1a1200','#2e2200','#161000','#221a00'],
-        mids:  ['#7a6000','#907200','#5c4800'],
-        peaks: ['#e8c028','#f6d038','#ffe050','#d0a818','#ecca30','#fff068'],
-        anchorSoft:'#806400', anchorBright:'#fad838',
-        haloA:'rgba(240,190,30,0.20)', haloB:'rgba(160,110,0,0.22)',
-      },
-    };
+    const reduceMotion = window.matchMedia &&
+      window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
+    function shadeRgb(ramp, l) {
+      const x = Math.max(0, Math.min(0.999, l)) * (ramp.length - 1);
+      const i = Math.floor(x), f = x - i;
+      const a = ramp[i], b = ramp[i + 1];
+      return [a[0] + (b[0]-a[0])*f, a[1] + (b[1]-a[1])*f, a[2] + (b[2]-a[2])*f];
+    }
+    function shade(ramp, l) {
+      const c = shadeRgb(ramp, l);
+      return 'rgb(' + Math.round(c[0]) + ',' + Math.round(c[1]) + ',' + Math.round(c[2]) + ')';
+    }
+    function shadeMix(rampA, rampB, l, m) {
+      const a = shadeRgb(rampA, l), b = shadeRgb(rampB, l);
+      return 'rgb(' + Math.round(a[0] + (b[0]-a[0])*m) + ',' +
+                      Math.round(a[1] + (b[1]-a[1])*m) + ',' +
+                      Math.round(a[2] + (b[2]-a[2])*m) + ')';
+    }
+
+    function paintStatic() {
+      for (const f of FACET.tris) {
+        const facing = Math.cos(f.normal - 0.8) * 0.5 + 0.5;
+        f.el.setAttribute('fill', shade(f.ramp, f.baseL + AMP * 0.55 * facing * facing));
+      }
+    }
+
+    // Pause the loop while the hero is scrolled out of view.
+    let heroVisible = true;
+    const heroHost = document.querySelector('.hero-facets');
+    if (heroHost && 'IntersectionObserver' in window) {
+      new IntersectionObserver(es => {
+        es.forEach(e => { heroVisible = e.isIntersecting; });
+      }, { threshold: 0 }).observe(heroHost);
+    }
+
+    // While a colour wave runs, each facet cross-fades old→new ramp behind a
+    // soft front sweeping top-right → bottom-left — same style as the sheen.
+    let waveT0 = 0; // performance.now() when the current colour wave started
+    const WAVE_BLEND = 0.14; // fraction of the sweep over which a facet fades
+
+    function frame(now) {
+      requestAnimationFrame(frame);
+      if (!heroVisible || !FACET.tris.length) return;
+      const t = now / 1000;
+      const lightAngle = t * LIGHT_SPEED;
+      const sweep = 1.2 - ((t * BAND_SPEED) % 1.4); // top-right → bottom-left
+      const waveProg = waveT0 ? (now - waveT0) / WAVE_DUR : -1;
+      for (const f of FACET.tris) {
+        const facing = Math.cos(f.normal - lightAngle) * 0.5 + 0.5;
+        const band = Math.exp(-Math.pow((f.proj - sweep) / BAND_WIDTH, 2));
+        const l = f.baseL + AMP * (0.22 * facing * facing + 0.78 * band);
+        if (waveProg >= 0 && f.rampNext) {
+          const x = (waveProg - (1 - f.proj)) / WAVE_BLEND;
+          const m = x <= 0 ? 0 : x >= 1 ? 1 : x * x * (3 - 2 * x);
+          f.el.setAttribute('fill', shadeMix(f.ramp, f.rampNext, l, m));
+        } else {
+          f.el.setAttribute('fill', shade(f.ramp, l));
+        }
+      }
+      if (waveT0 && waveProg >= 1 + WAVE_BLEND) {
+        for (const f of FACET.tris) {
+          if (f.rampNext) { f.ramp = f.rampNext; f.rampNext = null; }
+        }
+        waveT0 = 0;
+      }
+    }
+
+    if (reduceMotion) paintStatic();
+    else requestAnimationFrame(frame);
+
+    // ── Colour wave on swatch click ──
     let waveActive = false;
     let nextGem    = null;
 
@@ -3110,59 +3169,54 @@
       waveActive = true;
       nextGem    = null;
 
-      const g    = WAVE_GEM[gem];
-      const host = document.querySelector('.hero-facets');
-      if (!host || !g) { waveActive = false; return; }
+      const ramps = GEM_RAMPS_RGB[gem] || GEM_RAMPS_RGB.blue;
+      const decor = GEM_DECOR[gem]     || GEM_DECOR.blue;
+      const host  = FACET.host;
+      if (!host || !FACET.tris.length) { waveActive = false; return; }
 
       let seed = 77777;
       const rnd = () => { seed = (seed * 16807) % 2147483647; return seed / 2147483647; };
 
-      let maxFireAt = 0;
-
-      // Each polygon's --d encodes its sweep position:
-      //   proj = abs(d_sec) / SWEEP_MAX_D → [0 = bottom-left, 1 = top-right]
-      // Fire top-right first: fireAt = (1 - proj) * WAVE_DUR
-      host.querySelectorAll('polygon:not(.anchor)').forEach(p => {
-        const dSec   = parseFloat(p.style.getPropertyValue('--d') || '0');
-        const proj   = Math.min(1, Math.abs(dSec) / SWEEP_MAX_D);
-        const fireAt = Math.round((1 - proj) * WAVE_DUR);
-
-        if (fireAt > maxFireAt) maxFireAt = fireAt;
-
-        const base = g.bases[Math.floor(rnd() * g.bases.length)];
-        const mid  = g.mids [Math.floor(rnd() * g.mids.length)];
-        const peak = g.peaks[Math.floor(rnd() * g.peaks.length)];
-
-        setTimeout(() => {
-          p.style.setProperty('--base', base);
-          p.style.setProperty('--mid',  mid);
-          p.style.setProperty('--peak', peak);
-        }, fireAt);
+      FACET.tris.forEach(f => {
+        f.rampNext = ramps[Math.floor(rnd() * ramps.length)];
       });
+      if (reduceMotion) {
+        // No animation: swap ramps immediately and repaint once.
+        FACET.tris.forEach(f => { f.ramp = f.rampNext; f.rampNext = null; });
+        paintStatic();
+      } else {
+        waveT0 = performance.now();
+      }
+      const maxFireAt = Math.round(WAVE_DUR * (1 + WAVE_BLEND));
 
-      // Anchors change at the midpoint of the sweep.
+      // Anchors and halo change at the midpoint of the sweep.
       setTimeout(() => {
-        host.style.setProperty('--anchor-soft',   g.anchorSoft);
-        host.style.setProperty('--anchor-bright', g.anchorBright);
-        host.style.setProperty('--halo-a',        g.haloA);
-        host.style.setProperty('--halo-b',        g.haloB);
+        host.style.setProperty('--anchor-soft',   decor.anchorSoft);
+        host.style.setProperty('--anchor-bright', decor.anchorBright);
+        host.style.setProperty('--halo-a',        decor.haloA);
+        host.style.setProperty('--halo-b',        decor.haloB);
       }, Math.round(maxFireAt * 0.5));
 
-      // After the wave fully finishes: update section backgrounds, then
-      // start the next queued wave if the user clicked again mid-sweep.
+      // After the wave fully finishes, start the next queued wave if the
+      // user clicked again mid-sweep.
       setTimeout(() => {
-        document.documentElement.style.setProperty('--midnight',    GEM_MIDNIGHT[gem]    || GEM_MIDNIGHT.blue);
-        document.documentElement.style.setProperty('--sapphire-bg', GEM_SAPPHIRE_BG[gem] || GEM_SAPPHIRE_BG.blue);
         waveActive = false;
         if (nextGem) runWave(nextGem);
       }, maxFireAt + 300);
+    }
+
+    // Section backgrounds change immediately on click — the user may scroll
+    // away without waiting for the hero wave. CSS transitions ease the shift.
+    function applySectionBg(gem) {
+      document.documentElement.style.setProperty('--midnight',    GEM_MIDNIGHT[gem]    || GEM_MIDNIGHT.blue);
+      document.documentElement.style.setProperty('--sapphire-bg', GEM_SAPPHIRE_BG[gem] || GEM_SAPPHIRE_BG.blue);
     }
 
     document.querySelectorAll('.hero-swatch').forEach(btn => {
       btn.addEventListener('click', () => {
         document.querySelectorAll('.hero-swatch').forEach(b => b.classList.remove('active'));
         btn.classList.add('active');
-        window.__gemTheme = btn.dataset.gem;
+        applySectionBg(btn.dataset.gem);
         if (waveActive) {
           // Let current wave finish — remember only the latest click.
           nextGem = btn.dataset.gem;
