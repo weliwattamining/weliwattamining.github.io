@@ -3271,7 +3271,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     // pauses while off-screen; disabled under reduced motion.
     const isMobile = () => window.matchMedia('(max-width: 600px)').matches;
     if (!reduceMotion && isMobile()) {
-      const order = ['ruby', 'padpa', 'yellow', 'blue'];
+      const order = ['ruby', 'blue'];
       let ci = 0;
       const DWELL = 2200; // breath after a wave settles before the next begins
       (function cycle() {
