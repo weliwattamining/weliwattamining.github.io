@@ -3263,6 +3263,28 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
         }
       });
     });
+
+    // ── Mobile auto-cycle ──
+    // The picker is hidden ≤600px, so the hero slowly drifts through the gem
+    // colours on its own — showcasing the colour-change with zero UI. Hero
+    // facets only (sections keep their default palette, no applySectionBg);
+    // pauses while off-screen; disabled under reduced motion.
+    const isMobile = () => window.matchMedia('(max-width: 600px)').matches;
+    if (!reduceMotion && isMobile()) {
+      const order = ['ruby', 'padpa', 'yellow', 'blue'];
+      let ci = 0;
+      const DWELL = 2200; // breath after a wave settles before the next begins
+      (function cycle() {
+        if (!isMobile()) return; // rotated to a wider viewport — hand back to picker
+        if (heroVisible && !waveActive && FACET.tris.length) {
+          runWave(order[ci]);
+          ci = (ci + 1) % order.length;
+          setTimeout(cycle, WAVE_DUR * (1 + WAVE_BLEND) + 300 + DWELL);
+        } else {
+          setTimeout(cycle, 1000); // off-screen, busy, or facets not built yet
+        }
+      })();
+    }
   }());
 
   let __facetTimer;
