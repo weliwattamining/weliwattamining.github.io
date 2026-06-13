@@ -2958,17 +2958,20 @@
     // orange ↔ salmon. Three ramps so different facets sit at different points
     // of that range. Darks stay rosy-warm (never brown), peaks pastel.
     padpa:  [
-      ['#200a08','#3c1410','#702c22','#aa4836','#e06a4c','#ff8a64','#ffa882','#ffc4a4'],
-      ['#1e0810','#380e1c','#642038','#a03a54','#d05874','#f87c98','#ffa0b8','#ffc2d0'],
+      ['#210b08','#3f1512','#7a2f24','#bc5240','#f07658','#ff9a74','#ffb692','#ffd0b6'],
       ['#200a0a','#401616','#783028','#b85044','#ec7460','#ff9480','#ffb09a','#ffccb8'],
+      ['#1f0a0c','#3d1519','#742c30','#b24e54','#e8707a','#ff8e98','#ffaab2','#ffc6cc'],
     ],
-    yellow: [['#100c00','#1e1600','#3a2c00','#5c4800','#7a6000','#907200','#c8a818','#ecca30']],
+    // Yellow sapphire: golden amber, never olive. Darks stay warm (R > G) so
+    // they read golden-brown not muddy; mids are saturated goldenrod; the peak
+    // is a rich warm gold rather than a pale highlight.
+    yellow: [['#160e00','#2c1c00','#523600','#7d5500','#a87400','#d49a08','#f0bc1c','#ffd84a']],
   };
   const GEM_DECOR = {
     blue:   { anchorSoft:'#14416f', anchorBright:'#4a8fc8', haloA:'rgba(83,148,207,0.18)',   haloB:'rgba(30,60,110,0.22)'   },
     ruby:   { anchorSoft:'#8a0e1a', anchorBright:'#ee2030', haloA:'rgba(220,20,35,0.20)',    haloB:'rgba(110,10,70,0.22)'   },
     padpa:  { anchorSoft:'#c06040', anchorBright:'#ffb8d0', haloA:'rgba(255,140,60,0.20)',   haloB:'rgba(255,120,170,0.20)' },
-    yellow: { anchorSoft:'#806400', anchorBright:'#fad838', haloA:'rgba(240,190,30,0.20)',   haloB:'rgba(160,110,0,0.22)'   },
+    yellow: { anchorSoft:'#8c5e00', anchorBright:'#ffd24a', haloA:'rgba(240,180,20,0.22)',   haloB:'rgba(150,95,0,0.24)'    },
   };
   const GEM_RAMPS_RGB = {};
   Object.keys(GEM_RAMPS).forEach(k => {
