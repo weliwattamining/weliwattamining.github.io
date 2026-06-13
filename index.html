@@ -1590,6 +1590,19 @@
   .reveal { opacity: 0; transform: translateY(24px); transition: opacity 1.1s cubic-bezier(.2,.7,.2,1), transform 1.1s cubic-bezier(.2,.7,.2,1); }
   .reveal.in { opacity: 1; transform: none; }
 
+  /* Hero copy reveals via pure CSS on load — never gated on the main script,
+     so it appears at first paint even on slow/low-data mobile. The JS observer
+     skips these (see initReveal). */
+  .hero .hero-content > .reveal { animation: hero-rise 1.1s cubic-bezier(.2,.7,.2,1) both; }
+  .hero .hero-content > .reveal:nth-child(1) { animation-delay: .06s; }
+  .hero .hero-content > .reveal:nth-child(2) { animation-delay: .16s; }
+  .hero .hero-content > .reveal:nth-child(3) { animation-delay: .26s; }
+  .hero .hero-content > .reveal:nth-child(4) { animation-delay: .36s; }
+  @keyframes hero-rise { from { opacity: 0; transform: translateY(24px); } to { opacity: 1; transform: none; } }
+  @media (prefers-reduced-motion: reduce) {
+    .hero .hero-content > .reveal { animation: none; opacity: 1; transform: none; }
+  }
+
   ::selection { background: var(--gold); color: var(--sapphire); }
 
   /* ─────────── Mobile polish ─────────── */
@@ -3066,9 +3079,14 @@
     host.querySelectorAll('polygon[data-f]').forEach(p => { meta[Number(p.dataset.f)].el = p; });
     FACET.tris = meta;
     FACET.host = host;
+    if (typeof window.__onHeroFacets === 'function') window.__onHeroFacets();
   }
 
-  buildHeroFacets();
+  // Build the faceted SVG AFTER first paint so the heavy innerHTML + polygon
+  // walk never blocks the hero copy/background from rendering. Critical for
+  // low-data, low-CPU mobile where this work was stalling the visible hero.
+  if ('requestIdleCallback' in window) requestIdleCallback(buildHeroFacets, { timeout: 600 });
+  else requestAnimationFrame(() => requestAnimationFrame(buildHeroFacets));
 
   // Per-gem dark background tints — only --midnight (pure backgrounds, never text)
   const GEM_MIDNIGHT    = { blue:'#02070D', ruby:'#1c0205', padpa:'#1c0508', yellow:'#181200' };
@@ -3154,8 +3172,14 @@
       }
     }
 
-    if (reduceMotion) paintStatic();
-    else requestAnimationFrame(frame);
+    if (reduceMotion) {
+      // No rAF loop under reduced motion — paint once, and again once the
+      // deferred facet build finishes (FACET may be empty at this point).
+      window.__onHeroFacets = paintStatic;
+      if (FACET.tris.length) paintStatic();
+    } else {
+      requestAnimationFrame(frame);
+    }
 
     // ── Colour wave on swatch click ──
     let waveActive = false;
@@ -3250,7 +3274,9 @@
   const io = new IntersectionObserver((entries) => {
     entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); } });
   }, { threshold: 0.12 });
-  document.querySelectorAll('.reveal').forEach(el => io.observe(el));
+  // Hero copy reveals via CSS (see .hero .hero-content > .reveal) — skip it
+  // here so it never depends on this script executing.
+  document.querySelectorAll('.reveal').forEach(el => { if (!el.closest('.hero')) io.observe(el); });
 
   // ───── Inquire buttons → WhatsApp ─────
   document.querySelectorAll('[data-open-inquiry]').forEach(el => {
